@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Store Chat</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .container { width: 90%; max-width: 600px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; }
+        .login-form { padding: 40px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
+        .form-group input { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+        .login-btn { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .error { color: #e74c3c; margin-top: 10px; font-size: 14px; }
+        #chatMessages { padding: 20px; height: 400px; overflow-y: auto; }
+        .message { margin-bottom: 15px; }
+        .message.user { text-align: right; }
+        .message-content { display: inline-block; padding: 12px 16px; border-radius: 12px; max-width: 80%; white-space: pre-wrap; }
+        .message.user .message-content { background: #667eea; color: white; }
+        .message.assistant .message-content { background: #f0f0f0; color: #333; }
+        .input-container { display: flex; padding: 20px; border-top: 1px solid #e0e0e0; }
+        #userInput { flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px; }
+        #sendBtn { margin-left: 10px; padding: 12px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        #sendBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐾 Pet Store Chat</h1>
+            <p>AI-Powered Pet Assistant</p>
+        </div>
+        
+        <div class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter username" value="testuser">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter password">
+            </div>
+            <button class="login-btn" id="loginBtn">Sign In</button>
+            <div class="error" id="loginError"></div>
+        </div>
+        
+        <div id="chatMessages" style="display: none;"></div>
+        
+        <div class="input-container" id="inputContainer" style="display: none;">
+            <input type="text" id="userInput" placeholder="Try: 'List all pets' or 'Show me dogs'" />
+            <button id="sendBtn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            userPoolId: 'us-east-1_RNmMBC87g',
+            clientId: '435iqd7cgbn2slmgn0a36fo9lf',
+            region: 'us-east-1'
+        };
+
+        let accessToken = null;
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            if (!username || !password) {
+                errorDiv.textContent = 'Please enter username and password';
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://cognito-idp.${CONFIG.region}.amazonaws.com/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-amz-json-1.1',
+                        'X-Amz-Target': 'AWSCognitoIdentityProviderService.InitiateAuth'
+                    },
+                    body: JSON.stringify({
+                        AuthFlow: 'USER_PASSWORD_AUTH',
+                        ClientId: CONFIG.clientId,
+                        AuthParameters: {
+                            USERNAME: username,
+                            PASSWORD: password
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.AuthenticationResult) {
+                    accessToken = data.AuthenticationResult.AccessToken;
+                    sessionStorage.setItem('accessToken', accessToken);
+                    showChat();
+                } else if (data.__type) {
+                    errorDiv.textContent = data.message || data.__type;
+                } else {
+                    errorDiv.textContent = 'Invalid credentials';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Login failed: ' + error.message;
+            }
+        }
+
+        function showChat() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('chatMessages').style.display = 'block';
+            document.getElementById('inputContainer').style.display = 'flex';
+            addMessage('assistant', 'Welcome! Try:\n• "List all pets"\n• "Show me dogs"\n• "Add a dog named Max, breed: Golden Retriever, age: 3, price: $500"');
+        }
+
+        function addMessage(role, content) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            messageDiv.innerHTML = `<div class="message-content">${content}</div>`;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = '';
+            document.getElementById('sendBtn').disabled = true;
+
+            addMessage('user', message);
+
+            try {
+                const response = await handleMessage(message);
+                addMessage('assistant', response);
+            } catch (error) {
+                addMessage('assistant', '❌ Error: ' + error.message);
+            }
+
+            document.getElementById('sendBtn').disabled = false;
+        }
+
+        async function handleMessage(userMessage) {
+            const msg = userMessage.toLowerCase();
+            
+            // Handle add pet
+            if (msg.includes('add')) {
+                const nameMatch = userMessage.match(/name[d:\s]+([A-Z][a-z]+)/i);
+                const typeMatch = userMessage.match(/\b(dog|cat|bird|fish|hamster|rabbit|turtle|guinea pig|lizard|frog)\b/i);
+                const breedMatch = userMessage.match(/breed[:\s]+([A-Za-z\s]+?)(?:,|age|\.|$)/i);
+                const ageMatch = userMessage.match(/age[:\s]+(\d+)/i);
+                const priceMatch = userMessage.match(/price[:\s]+\$?(\d+)/i) || userMessage.match(/\$(\d+)/);
+                
+                if (!typeMatch) {
+                    return '❌ Invalid pet type. We only accept:\n• dog, cat, bird, fish\n• hamster, rabbit, turtle\n• guinea pig, lizard, frog\n\nTry: "Add a dog named Max, breed: Golden Retriever, age: 3, price: $500"';
+                }
+                
+                if (nameMatch && typeMatch) {
+                    const pet = {
+                        name: nameMatch[1],
+                        type: typeMatch[1].toLowerCase(),
+                        breed: breedMatch ? breedMatch[1].trim() : 'Mixed',
+                        age: ageMatch ? parseInt(ageMatch[1]) : 1,
+                        price: priceMatch ? parseInt(priceMatch[1]) : 100
+                    };
+                    
+                    const res = await fetch('https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(pet),
+                        mode: 'cors'
+                    });
+                    
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    
+                    const data = await res.json();
+                    return `✅ Added ${pet.name}!\n\n🐾 ${pet.name}\nType: ${pet.type}\nBreed: ${pet.breed}\nAge: ${pet.age} years\nPrice: $${pet.price}`;
+                }
+                
+                return 'To add a pet, use:\n"Add a dog named Max, breed: Golden Retriever, age: 3, price: $500"';
+            }
+            
+            // All other queries - Use LLM endpoint
+            const res = await fetch('https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ query: userMessage }),
+                mode: 'cors'
+            });
+            
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            
+            const data = await res.json();
+            const pets = data.pets || [];
+            
+            if (pets.length === 0) {
+                return `No pets found matching: "${userMessage}"\n\nTry:\n• "List all pets"\n• "Show me dogs"\n• "What are the most expensive pets?"`;
+            }
+            
+            let response = `Found ${data.count} pet${data.count !== 1 ? 's' : ''}`;
+            if (data.filters_applied && !data.filters_applied.fallback) {
+                response += ` (🤖 AI-powered)`;
+            }
+            response += `:\n\n`;
+            
+            response += pets.map(p => 
+                `🐾 ${p.name} - ${p.type} (${p.breed})\n   Age: ${p.age} years | Price: $${p.price}`
+            ).join('\n\n');
+            
+            if (data.count > 10) {
+                response += `\n\n... and ${data.count - 10} more`;
+            }
+            
+            return response;
+        }
+
+        // Event listeners
+        document.getElementById('loginBtn').addEventListener('click', login);
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+
+        // Check session
+        if (sessionStorage.getItem('accessToken')) {
+            accessToken = sessionStorage.getItem('accessToken');
+            showChat();
+        }
+    </script>
+</body>
+</html>
