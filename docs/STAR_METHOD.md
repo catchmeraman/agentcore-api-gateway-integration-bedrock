@@ -202,7 +202,7 @@ aws cognito-idp create-user-pool \
 aws cognito-idp admin-create-user \
   --user-pool-id POOL_ID \
   --username testuser \
-  --password MySecurePass123!
+  --password ********
 ```
 
 **Security Features:**

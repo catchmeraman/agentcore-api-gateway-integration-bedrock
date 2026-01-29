@@ -73,7 +73,7 @@ Lambda Function
 ### 2. Authentication (AWS Cognito)
 - **User Pool:** us-east-1_RNmMBC87g
 - **Client ID:** 435iqd7cgbn2slmgn0a36fo9lf
-- **Test User:** testuser / MySecurePass123!
+- **Test User:** testuser / ********
 - **Token Type:** JWT (1034 characters)
 - **Expiration:** 1 hour
 
@@ -263,7 +263,7 @@ agentcore-api-gateway-integration-bedrock/
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
   --client-id 435iqd7cgbn2slmgn0a36fo9lf \
-  --auth-parameters USERNAME=testuser,PASSWORD=MySecurePass123! \
+  --auth-parameters USERNAME=testuser,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text \
   --region us-east-1)

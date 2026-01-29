@@ -3,7 +3,7 @@
 ## 🌐 Live Demo
 **https://petstore.cloudopsinsights.com**
 
-Login: `testuser` / `MySecurePass123!`
+Login: `testuser` / `********`
 
 ## 🎯 What We Built
 
@@ -242,7 +242,7 @@ Browser (HTTPS) → AWS Amplify → Cognito → API Gateway → Lambda → Bedro
 
 **Login:**
 - Username: `testuser`
-- Password: `MySecurePass123!`
+- Password: `********`
 
 **Try these queries:**
 - "List all pets"

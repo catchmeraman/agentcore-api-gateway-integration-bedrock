@@ -10,7 +10,7 @@ The `petstore-chat-secure.html` already includes:
 
 **Default credentials:**
 - Username: `testuser`
-- Password: `MySecurePass123!`
+- Password: `********`
 
 ## Deploy via Amplify Console (5 minutes)
 
@@ -106,7 +106,7 @@ Add these to your DNS provider (Route 53, GoDaddy, etc.)
 2. You'll see login form
 3. Enter:
    - Username: `testuser`
-   - Password: `MySecurePass123!`
+   - Password: `********`
 4. Click "Sign In"
 5. Start chatting!
 

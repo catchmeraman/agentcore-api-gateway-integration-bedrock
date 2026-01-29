@@ -118,7 +118,7 @@ Time: User-dependent
 
 **What Happens:**
 1. User types "testuser" in username field
-2. User types "MySecurePass123!" in password field
+2. User types "********" in password field
 3. JavaScript validates fields are not empty
 4. Submit button becomes active
 

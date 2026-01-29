@@ -7,7 +7,7 @@
 
 **Login Credentials:**
 - Username: `testuser`
-- Password: `MySecurePass123!`
+- Password: `********`
 
 ---
 

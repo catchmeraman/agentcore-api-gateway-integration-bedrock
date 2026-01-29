@@ -8,7 +8,7 @@
 
 **Login credentials:**
 - Username: `testuser`
-- Password: `MySecurePass123!`
+- Password: `********` (Contact admin for access)
 
 **Try these queries:**
 - "list 5 costlier pets" - Shows top 5 most expensive pets
@@ -311,7 +311,7 @@ open https://petstore.cloudopsinsights.com
 
 # Login with test user
 Username: testuser
-Password: MySecurePass123!
+Password: ********
 
 # Try queries:
 # - "List all pets"

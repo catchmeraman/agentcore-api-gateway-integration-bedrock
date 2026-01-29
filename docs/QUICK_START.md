@@ -144,13 +144,13 @@ aws cognito-idp admin-create-user \
 aws cognito-idp admin-set-user-password \
   --user-pool-id $POOL_ID \
   --username testuser \
-  --password MySecurePass123! \
+  --password ******** \
   --permanent \
   --region us-east-1
 
 echo "User Pool ID: $POOL_ID"
 echo "Client ID: $CLIENT_ID"
-echo "Test User: testuser / MySecurePass123!"
+echo "Test User: testuser / ********"
 ```
 
 ## Step 5: Update Frontend Configuration (2 min)
@@ -179,7 +179,7 @@ echo "Frontend URL: http://${BUCKET}.s3-website-us-east-1.amazonaws.com/petstore
 ## Step 6: Test! (1 min)
 
 1. Open the frontend URL in your browser
-2. Login with: `testuser` / `MySecurePass123!`
+2. Login with: `testuser` / `********`
 3. Try these queries:
    - "List all pets"
    - "Show me expensive dogs"

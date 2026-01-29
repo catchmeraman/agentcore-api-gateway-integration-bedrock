@@ -116,7 +116,7 @@ Click **Save** or **Update Gateway**
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
   --client-id 435iqd7cgbn2slmgn0a36fo9lf \
-  --auth-parameters USERNAME=testuser,PASSWORD=MySecurePass123! \
+  --auth-parameters USERNAME=testuser,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text \
   --region us-east-1)
@@ -155,7 +155,7 @@ aws amplify list-jobs --app-id d1du8jz8xbjmnh --branch-name main --region us-eas
 
 After configuring tools, visit: https://petstore.cloudopsinsights.com
 
-1. Login with: `testuser` / `MySecurePass123!`
+1. Login with: `testuser` / `********`
 2. Try: "Show me dogs under $300"
 3. You should see: "Found X pets (🤖 AI via AgentCore Gateway → Bedrock)"
 

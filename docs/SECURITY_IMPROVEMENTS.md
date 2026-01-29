@@ -7,7 +7,7 @@
 // ❌ BAD: Hardcoded in source code
 const credentials = {
     username: 'testuser',
-    password: 'MySecurePass123!'
+    password: '********'
 };
 ```
 
@@ -125,7 +125,7 @@ http://petstore-chat-v2.s3-website-us-east-1.amazonaws.com/petstore-chat-secure.
 
 ### 2. Login
 - Username: `testuser`
-- Password: `MySecurePass123!`
+- Password: `********`
 
 ### 3. Verify Security
 - Open DevTools → Sources

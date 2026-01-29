@@ -120,7 +120,7 @@ curl -s https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.a
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
   --client-id 435iqd7cgbn2slmgn0a36fo9lf \
-  --auth-parameters USERNAME=testuser,PASSWORD=MySecurePass123! \
+  --auth-parameters USERNAME=testuser,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text \
   --region us-east-1)
