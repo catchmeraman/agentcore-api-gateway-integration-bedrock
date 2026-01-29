@@ -8,7 +8,6 @@
 
 **Login credentials:**
 - Username: `testuser`
-- Password: `MySecurePass123!`
 
 ## 🎯 What We Built
 
