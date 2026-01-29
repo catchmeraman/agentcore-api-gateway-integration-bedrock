@@ -177,8 +177,8 @@
                     age: ageMatch ? parseInt(ageMatch[1]) : 1,
                     price: priceMatch ? parseInt(priceMatch[1]) : 100
                 };
-            } else if (msg.includes('list') || msg.includes('all')) {
-                // Use ListPets tool
+            } else if ((msg.includes('list') || msg.includes('all')) && !msg.includes('costlier') && !msg.includes('cheaper') && !msg.includes('expensive') && !msg.includes('under') && !msg.includes('over') && msg.split(' ').length <= 3) {
+                // Use ListPets tool only for simple "list all" or "list pets"
                 toolName = 'PetStoreTarget___ListPets';
                 toolArgs = {};
             } else {
