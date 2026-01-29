@@ -225,7 +225,8 @@
                 return `No pets found matching: "${userMessage}"`;
             }
             
-            let response = `Found ${pets.length} pet${pets.length !== 1 ? 's' : ''}`;
+            const totalCount = result.count || pets.length;
+            let response = `Found ${totalCount} pet${totalCount !== 1 ? 's' : ''}`;
             if (result.filters_applied && !result.filters_applied.fallback) {
                 response += ` (🤖 AI via AgentCore Gateway → Bedrock)`;
             } else {
@@ -237,8 +238,8 @@
                 `🐾 ${p.name} - ${p.type} (${p.breed})\n   Age: ${p.age} years | Price: $${p.price}`
             ).join('\n\n');
             
-            if (pets.length > 10) {
-                response += `\n\n... and ${pets.length - 10} more`;
+            if (totalCount > 10) {
+                response += `\n\n... and ${totalCount - 10} more`;
             }
             
             return response;
