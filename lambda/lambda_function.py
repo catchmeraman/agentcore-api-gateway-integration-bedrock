@@ -128,6 +128,10 @@ def query_with_llm(user_query, pets):
                         "min_price": {
                             "type": "integer",
                             "description": "Minimum price filter"
+                        },
+                        "limit": {
+                            "type": "integer",
+                            "description": "Maximum number of results to return (e.g., 5 for 'list 5 pets')"
                         }
                     }
                 }
@@ -179,8 +183,11 @@ def query_with_llm(user_query, pets):
                 else:
                     filtered_pets.sort(key=lambda x: x['name'])
                 
+                # Apply limit
+                limit = tool_input.get('limit', 10)
+                
                 return {
-                    'pets': filtered_pets[:10],  # Limit to 10 results
+                    'pets': filtered_pets[:limit],
                     'count': len(filtered_pets),
                     'filters_applied': tool_input
                 }
