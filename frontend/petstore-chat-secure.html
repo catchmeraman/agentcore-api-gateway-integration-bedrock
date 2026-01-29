@@ -59,7 +59,8 @@
         const CONFIG = {
             userPoolId: 'us-east-1_RNmMBC87g',
             clientId: '435iqd7cgbn2slmgn0a36fo9lf',
-            region: 'us-east-1'
+            region: 'us-east-1',
+            gatewayUrl: 'https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp'
         };
 
         let accessToken = null;
@@ -144,10 +145,14 @@
         }
 
         async function handleMessage(userMessage) {
+            // ALL operations go through AgentCore Gateway (MCP protocol)
             const msg = userMessage.toLowerCase();
             
-            // Handle add pet
+            // Determine which MCP tool to call
+            let toolName, toolArgs;
+            
             if (msg.includes('add')) {
+                // Extract pet details for AddPet tool
                 const nameMatch = userMessage.match(/name[d:\s]+([A-Z][a-z]+)/i);
                 const typeMatch = userMessage.match(/\b(dog|cat|bird|fish|hamster|rabbit|turtle|guinea pig|lizard|frog)\b/i);
                 const breedMatch = userMessage.match(/breed[:\s]+([A-Za-z\s]+?)(?:,|age|\.|$)/i);
@@ -155,69 +160,83 @@
                 const priceMatch = userMessage.match(/price[:\s]+\$?(\d+)/i) || userMessage.match(/\$(\d+)/);
                 
                 if (!typeMatch) {
-                    return '❌ Invalid pet type. We only accept:\n• dog, cat, bird, fish\n• hamster, rabbit, turtle\n• guinea pig, lizard, frog\n\nTry: "Add a dog named Max, breed: Golden Retriever, age: 3, price: $500"';
+                    return '❌ Invalid pet type. We only accept:\n• dog, cat, bird, fish\n• hamster, rabbit, turtle\n• guinea pig, lizard, frog';
                 }
                 
-                if (nameMatch && typeMatch) {
-                    const pet = {
-                        name: nameMatch[1],
-                        type: typeMatch[1].toLowerCase(),
-                        breed: breedMatch ? breedMatch[1].trim() : 'Mixed',
-                        age: ageMatch ? parseInt(ageMatch[1]) : 1,
-                        price: priceMatch ? parseInt(priceMatch[1]) : 100
-                    };
-                    
-                    const res = await fetch('https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets', {
-                        method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(pet),
-                        mode: 'cors'
-                    });
-                    
-                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                    
-                    const data = await res.json();
-                    return `✅ Added ${pet.name}!\n\n🐾 ${pet.name}\nType: ${pet.type}\nBreed: ${pet.breed}\nAge: ${pet.age} years\nPrice: $${pet.price}`;
+                if (!nameMatch) {
+                    return 'Please include pet name: "Add a dog named Max..."';
                 }
                 
-                return 'To add a pet, use:\n"Add a dog named Max, breed: Golden Retriever, age: 3, price: $500"';
+                toolName = 'PetStoreTarget___AddPet';
+                toolArgs = {
+                    name: nameMatch[1],
+                    type: typeMatch[1].toLowerCase(),
+                    breed: breedMatch ? breedMatch[1].trim() : 'Mixed',
+                    age: ageMatch ? parseInt(ageMatch[1]) : 1,
+                    price: priceMatch ? parseInt(priceMatch[1]) : 100
+                };
+            } else if (msg.includes('list') || msg.includes('all')) {
+                // Use ListPets tool
+                toolName = 'PetStoreTarget___ListPets';
+                toolArgs = {};
+            } else {
+                // Use QueryPets tool for natural language queries
+                toolName = 'PetStoreTarget___QueryPets';
+                toolArgs = { query: userMessage };
             }
             
-            // All other queries - Use LLM endpoint
-            const res = await fetch('https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query', {
+            // Call AgentCore Gateway with MCP protocol
+            const res = await fetch(CONFIG.gatewayUrl, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
-                    'Accept': 'application/json'
+                    'Authorization': `Bearer ${accessToken}`
                 },
-                body: JSON.stringify({ query: userMessage }),
-                mode: 'cors'
+                body: JSON.stringify({
+                    jsonrpc: '2.0',
+                    id: Date.now(),
+                    method: 'tools/call',
+                    params: {
+                        name: toolName,
+                        arguments: toolArgs
+                    }
+                })
             });
             
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            if (!res.ok) throw new Error(`Gateway HTTP ${res.status}`);
             
-            const data = await res.json();
-            const pets = data.pets || [];
-            
-            if (pets.length === 0) {
-                return `No pets found matching: "${userMessage}"\n\nTry:\n• "List all pets"\n• "Show me dogs"\n• "What are the most expensive pets?"`;
+            const mcpResponse = await res.json();
+            if (mcpResponse.error) {
+                throw new Error(mcpResponse.error.message);
             }
             
-            let response = `Found ${data.count} pet${data.count !== 1 ? 's' : ''}`;
-            if (data.filters_applied && !data.filters_applied.fallback) {
-                response += ` (🤖 AI-powered)`;
+            // Parse MCP response
+            const result = JSON.parse(mcpResponse.result.content[0].text);
+            
+            // Format response based on operation
+            if (toolName.includes('AddPet')) {
+                return `✅ Added ${toolArgs.name}! (via AgentCore Gateway)\n\n🐾 ${toolArgs.name}\nType: ${toolArgs.type}\nBreed: ${toolArgs.breed}\nAge: ${toolArgs.age} years\nPrice: $${toolArgs.price}`;
+            }
+            
+            const pets = result.pets || result;
+            if (!Array.isArray(pets) || pets.length === 0) {
+                return `No pets found matching: "${userMessage}"`;
+            }
+            
+            let response = `Found ${pets.length} pet${pets.length !== 1 ? 's' : ''}`;
+            if (result.filters_applied && !result.filters_applied.fallback) {
+                response += ` (🤖 AI via AgentCore Gateway → Bedrock)`;
+            } else {
+                response += ` (via AgentCore Gateway)`;
             }
             response += `:\n\n`;
             
-            response += pets.map(p => 
+            response += pets.slice(0, 10).map(p => 
                 `🐾 ${p.name} - ${p.type} (${p.breed})\n   Age: ${p.age} years | Price: $${p.price}`
             ).join('\n\n');
             
-            if (data.count > 10) {
-                response += `\n\n... and ${data.count - 10} more`;
+            if (pets.length > 10) {
+                response += `\n\n... and ${pets.length - 10} more`;
             }
             
             return response;

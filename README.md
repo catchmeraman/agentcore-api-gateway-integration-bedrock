@@ -8,6 +8,7 @@
 
 **Login credentials:**
 - Username: `testuser`
+- Password: `MySecurePass123!`
 
 ## 🎯 What We Built
 
@@ -16,11 +17,19 @@ A conversational AI chatbot that demonstrates:
 1. **AgentCore Gateway Integration** - MCP protocol for tool exposure
 2. **LLM-Powered Natural Language** - Amazon Bedrock (Nova Micro) for query understanding
 3. **Full CRUD Operations** - Via conversational interface
-4. **Secure Authentication** - AWS Cognito without hardcoded credentials
+4. **Secure Authentication** - AWS Cognito with JWT tokens
 5. **Complete Observability** - CloudWatch logs showing full request flow
 6. **Production HTTPS** - AWS Amplify with custom domain and free SSL
 
-## 🏗️ Architecture
+---
+
+## 🏗️ Complete Architecture
+
+### High-Level Flow
+
+![AgentCore Complete Flow](./generated-diagrams/agentcore_complete_flow.png)
+
+### Architecture Overview
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -38,77 +47,180 @@ A conversational AI chatbot that demonstrates:
 │              Auto-deploy on git push                             │
 └────────────────────────────┬────────────────────────────────────┘
                              │
-                             │ JWT Token
-                             ▼
+```
 ┌─────────────────────────────────────────────────────────────────┐
-│                      AWS COGNITO                                 │
-│                  (Authentication)                                │
-│              User Pool: us-east-1_RNmMBC87g                      │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-                             │ Authenticated Requests
-                             ▼
+│ 1. BROWSER (Frontend)                                           │
+│    https://petstore.cloudopsinsights.com                        │
+│    - User types: "Show me dogs under $300"                     │
+│    - Sends MCP request to AgentCore Gateway                    │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ MCP Protocol (tools/call)
+                         │ Authorization: Bearer <JWT>
+                         ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                   API GATEWAY (REST API)                         │
-│                    ID: 66gd6g08ie                                │
-│                                                                   │
-│  Endpoints:                                                       │
-│  • GET  /pets          - List all pets                          │
-│  • GET  /pets/{id}     - Get pet by ID                          │
-│  • POST /pets          - Add new pet                            │
-│  • POST /pets/query    - LLM-powered natural language query     │
-│  • OPTIONS /*          - CORS preflight                         │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-                             │ Lambda Proxy Integration
-                             ▼
+│ 2. AGENTCORE GATEWAY (MCP Server)                               │
+│    Gateway ID: petstoregateway-remqjziohl                       │
+│                                                                  │
+│    Exposes 4 MCP Tools:                                         │
+│    • PetStoreTarget___ListPets                                  │
+│    • PetStoreTarget___GetPetById                                │
+│    • PetStoreTarget___AddPet                                    │
+│    • PetStoreTarget___QueryPets                                 │
+│                                                                  │
+│    - Validates JWT token from Cognito                           │
+│    - Routes to API Gateway using IAM role                       │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ HTTPS REST API (IAM Role)
+                         ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    LAMBDA FUNCTION                               │
-│                  (PetStoreFunction)                              │
-│                                                                   │
-│  Features:                                                        │
-│  • Bedrock Converse API integration                             │
-│  • Tool calling for parameter extraction                        │
-│  • Fallback to keyword matching                                 │
-│  • CORS handling                                                │
-└──────────────┬──────────────────────────┬───────────────────────┘
-               │                          │
-               │                          │ InvokeModel
-               ▼                          ▼
-┌──────────────────────────┐  ┌─────────────────────────────────┐
-│      DYNAMODB            │  │    AMAZON BEDROCK               │
-│   Table: PetStore        │  │  Model: Nova Micro              │
-│                          │  │  (us.amazon.nova-micro-v1:0)    │
-│  • 30+ pets              │  │                                 │
-│  • Partition key: id     │  │  Tool: filter_pets              │
-│  • On-demand billing     │  │  • type_filter                  │
-└──────────────────────────┘  │  • max_price                    │
-                              │  • min_price                    │
-                              │  • sort_by                      │
-                              └─────────────────────────────────┘
-
+│ 3. API GATEWAY (REST API)                                       │
+│    ID: 66gd6g08ie                                               │
+│                                                                  │
+│    Endpoints:                                                    │
+│    • GET  /pets          → ListPets                            │
+│    • GET  /pets/{id}     → GetPetById                          │
+│    • POST /pets          → AddPet                              │
+│    • POST /pets/query    → QueryPets (LLM-powered)            │
+│                                                                  │
+│    - No auth required (trusts AgentCore Gateway IAM role)      │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         │ Lambda Proxy Integration
+                         ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│              AGENTCORE GATEWAY (Optional)                        │
-│           Gateway ID: petstoregateway-remqjziohl                 │
-│                                                                   │
-│  MCP Tools Exposed:                                              │
-│  • ListPets    - GET /pets                                      │
-│  • GetPetById  - GET /pets/{petId}                              │
-│  • AddPet      - POST /pets                                     │
-│  • QueryPets   - POST /pets/query (LLM-powered)                 │
-└─────────────────────────────────────────────────────────────────┘
+│ 4. LAMBDA FUNCTION (PetStoreFunction)                           │
+│                                                                  │
+│    For QueryPets endpoint:                                      │
+│    1. Receives: {"query": "Show me dogs under $300"}          │
+│    2. Calls Bedrock Nova Micro:                                │
+│       "Extract filters from this query"                        │
+│    3. Bedrock returns: {"type": "dog", "max_price": 300}      │
+│    4. Queries DynamoDB with filters                            │
+│    5. Returns matching pets                                     │
+│                                                                  │
+│    For other endpoints:                                         │
+│    - Direct DynamoDB operations (no Bedrock)                   │
+└────────────────────────┬────────────────────────────────────────┘
+                         │
+                         ├──────────────┐
+                         │              │
+                         ▼              ▼
+              ┌──────────────┐  ┌──────────────┐
+              │ 5a. BEDROCK  │  │ 5b. DYNAMODB │
+              │  Nova Micro  │  │  PetStore    │
+              │              │  │   Table      │
+              │ (LLM for     │  │              │
+              │  query       │  │ (Pet data:   │
+              │  parsing)    │  │  30+ pets)   │
+              └──────────────┘  └──────────────┘
 ```
 
-## 💡 Why This Matters
+### 🔄 Complete Request Flow
 
-### Business Value
-- **Natural Language Interface** - Users ask questions in plain English
-- **Minimal Cost** - Nova Micro costs ~$0.0001 per query (fraction of a cent!)
-- **Production Ready** - Secure authentication, error handling, observability
-- **Scalable** - Serverless architecture scales automatically
-- **HTTPS Enabled** - Free SSL certificate via AWS Amplify
+#### Example: "Show me dogs under $300"
 
-### Technical Innovation
+**Step 1: Browser → AgentCore Gateway (MCP)**
+```javascript
+POST https://petstoregateway-xxx.amazonaws.com/mcp
+{
+  "jsonrpc": "2.0",
+  "method": "tools/call",
+  "params": {
+    "name": "PetStoreTarget___QueryPets",
+    "arguments": {"query": "Show me dogs under $300"}
+  }
+}
+```
+
+**Step 2: AgentCore Gateway → API Gateway**
+- Validates JWT token
+- Assumes IAM role
+- Maps MCP tool to REST endpoint
+```
+POST https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query
+{"query": "Show me dogs under $300"}
+```
+
+**Step 3: API Gateway → Lambda**
+- Routes to Lambda function
+- Passes request body
+
+**Step 4: Lambda → Bedrock**
+```python
+# Lambda calls Bedrock
+response = bedrock.converse(
+    modelId="us.amazon.nova-micro-v1:0",
+    messages=[{
+        "role": "user",
+        "content": "Extract filters from: Show me dogs under $300"
+    }]
+)
+# Bedrock responds: {"type": "dog", "max_price": 300}
+```
+
+**Step 5: Lambda → DynamoDB**
+```python
+# Query DynamoDB with extracted filters
+response = table.scan(
+    FilterExpression="attribute_type = :type AND price <= :max_price",
+    ExpressionAttributeValues={
+        ":type": "dog",
+        ":max_price": 300
+    }
+)
+# Returns: 5 matching pets
+```
+
+**Step 6-8: Response Flow**
+```
+Lambda → API Gateway → AgentCore Gateway → Browser
+{"pets": [...], "count": 5}
+```
+
+Browser displays: **"Found 5 pets (🤖 AI via AgentCore Gateway → Bedrock)"**
+
+---
+
+### 📊 Flow Diagrams
+
+#### LLM Query Flow
+![LLM Query Flow](./generated-diagrams/llm_query_flow.png)
+
+#### Simple CRUD Flow
+![CRUD Flow](./generated-diagrams/crud_flow.png)
+
+---
+
+## 💡 Why This Architecture?
+
+### 1. **AgentCore Gateway as Central Hub**
+- **Standardized Interface**: MCP protocol for all operations
+- **Security**: Single authentication point with JWT validation
+- **Tool Abstraction**: API endpoints exposed as callable tools
+- **Observability**: Centralized logging and monitoring
+
+### 2. **Bedrock in Lambda (Not Browser)**
+- **Cost Control**: Prevent unlimited API calls from browser
+- **Security**: API keys never exposed in frontend code
+- **Rate Limiting**: Control Bedrock usage per user/session
+- **Business Logic**: Complex query parsing on backend
+
+### 3. **Hybrid Approach**
+- **Simple Operations**: Direct DynamoDB (list, add, get)
+- **LLM Queries**: Bedrock for natural language understanding
+- **Performance**: Skip Bedrock when not needed (75ms vs 520ms)
+
+### 4. **Production Ready**
+- **HTTPS**: Free SSL via AWS Amplify
+- **Authentication**: Cognito with JWT tokens
+- **CORS**: Proper cross-origin configuration
+- **Error Handling**: Graceful fallbacks and user feedback
+
+---
+
+## 💡 Technical Innovation
 - **LLM Tool Calling** - Bedrock extracts structured parameters from natural language
 - **Hybrid Approach** - LLM for complex queries, fallback for simple ones
 - **MCP Protocol** - AgentCore Gateway exposes APIs as standardized tools
