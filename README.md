@@ -10,16 +10,23 @@
 - Username: `testuser`
 - Password: `MySecurePass123!`
 
+**Try these queries:**
+- "list 5 costlier pets" - Shows top 5 most expensive pets
+- "show me dogs under $300" - Filters by type and price
+- "list all pets" - Shows all pets
+- "add a dog named Max, breed: Golden Retriever, age: 3, price: $500"
+
 ## 🎯 What We Built
 
 A conversational AI chatbot that demonstrates:
 
-1. **AgentCore Gateway Integration** - MCP protocol for tool exposure
+1. **AgentCore Gateway Integration** - MCP protocol for standardized tool exposure
 2. **LLM-Powered Natural Language** - Amazon Bedrock (Nova Micro) for query understanding
-3. **Full CRUD Operations** - Via conversational interface
-4. **Secure Authentication** - AWS Cognito with JWT tokens
-5. **Complete Observability** - CloudWatch logs showing full request flow
-6. **Production HTTPS** - AWS Amplify with custom domain and free SSL
+3. **Intelligent Query Parsing** - Extracts filters, limits, and sorting from natural language
+4. **Full CRUD Operations** - Via conversational interface
+5. **Secure Authentication** - AWS Cognito with JWT tokens
+6. **Complete Observability** - CloudWatch logs showing full request flow
+7. **Production HTTPS** - AWS Amplify with custom domain and free SSL
 
 ---
 
