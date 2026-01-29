@@ -2,6 +2,14 @@
 
 🐾 **AI-Powered Pet Store Chatbot** - A production-ready demonstration of AWS AgentCore Gateway integration with API Gateway, Lambda, DynamoDB, and Amazon Bedrock for natural language processing.
 
+## 🌐 Live Demo
+
+**🎉 Try it now:** https://petstore.cloudopsinsights.com
+
+**Login credentials:**
+- Username: `testuser`
+- Password: `MySecurePass123!`
+
 ## 🎯 What We Built
 
 A conversational AI chatbot that demonstrates:
@@ -11,16 +19,27 @@ A conversational AI chatbot that demonstrates:
 3. **Full CRUD Operations** - Via conversational interface
 4. **Secure Authentication** - AWS Cognito without hardcoded credentials
 5. **Complete Observability** - CloudWatch logs showing full request flow
+6. **Production HTTPS** - AWS Amplify with custom domain and free SSL
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         USER BROWSER                             │
+│                    USER BROWSER (HTTPS)                          │
+│              https://petstore.cloudopsinsights.com               │
 │                  (petstore-chat-secure.html)                     │
 └────────────────────────────┬────────────────────────────────────┘
                              │
-                             │ HTTPS
+                             │ HTTPS (Free SSL via Amplify)
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      AWS AMPLIFY                                 │
+│                  (Hosting + CI/CD)                               │
+│              App ID: d1du8jz8xbjmnh                              │
+│              Auto-deploy on git push                             │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             │ JWT Token
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                      AWS COGNITO                                 │
@@ -28,7 +47,7 @@ A conversational AI chatbot that demonstrates:
 │              User Pool: us-east-1_RNmMBC87g                      │
 └────────────────────────────┬────────────────────────────────────┘
                              │
-                             │ JWT Token
+                             │ Authenticated Requests
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │                   API GATEWAY (REST API)                         │
@@ -39,6 +58,7 @@ A conversational AI chatbot that demonstrates:
 │  • GET  /pets/{id}     - Get pet by ID                          │
 │  • POST /pets          - Add new pet                            │
 │  • POST /pets/query    - LLM-powered natural language query     │
+│  • OPTIONS /*          - CORS preflight                         │
 └────────────────────────────┬────────────────────────────────────┘
                              │
                              │ Lambda Proxy Integration
@@ -87,12 +107,14 @@ A conversational AI chatbot that demonstrates:
 - **Minimal Cost** - Nova Micro costs ~$0.0001 per query (fraction of a cent!)
 - **Production Ready** - Secure authentication, error handling, observability
 - **Scalable** - Serverless architecture scales automatically
+- **HTTPS Enabled** - Free SSL certificate via AWS Amplify
 
 ### Technical Innovation
 - **LLM Tool Calling** - Bedrock extracts structured parameters from natural language
 - **Hybrid Approach** - LLM for complex queries, fallback for simple ones
 - **MCP Protocol** - AgentCore Gateway exposes APIs as standardized tools
 - **Complete Observability** - CloudWatch logs show entire request flow
+- **CI/CD Built-in** - Auto-deploy on git push via Amplify
 
 ## 🚀 Quick Start
 
@@ -110,70 +132,38 @@ cd agentcore-api-gateway-integration-bedrock
 
 ### 2. Deploy Infrastructure
 ```bash
-# Create DynamoDB table
-aws dynamodb create-table \
-  --table-name PetStore \
-  --attribute-definitions AttributeName=id,AttributeType=S \
-  --key-schema AttributeName=id,KeyType=HASH \
-  --billing-mode PAY_PER_REQUEST \
-  --region us-east-1
-
-# Create Lambda execution role
-aws iam create-role \
-  --role-name PetStoreLambdaRole \
-  --assume-role-policy-document file://iam/lambda-trust-policy.json
-
-# Attach policies
-aws iam put-role-policy \
-  --role-name PetStoreLambdaRole \
-  --policy-name BedrockInvokePolicy \
-  --policy-document file://iam/bedrock-policy.json
-
-aws iam put-role-policy \
-  --role-name PetStoreLambdaRole \
-  --policy-name DynamoDBAccessPolicy \
-  --policy-document file://iam/dynamodb-policy.json
-
-# Deploy Lambda function
-cd lambda
-zip lambda.zip lambda_function.py
-aws lambda create-function \
-  --function-name PetStoreFunction \
-  --runtime python3.11 \
-  --role arn:aws:iam::YOUR_ACCOUNT_ID:role/PetStoreLambdaRole \
-  --handler lambda_function.lambda_handler \
-  --zip-file fileb://lambda.zip \
-  --timeout 30 \
-  --memory-size 256 \
-  --region us-east-1
-
-# Create API Gateway (see api-gateway/ for detailed steps)
-# Create Cognito User Pool (see cognito/ for detailed steps)
-# Create AgentCore Gateway (see agentcore/ for detailed steps)
+# Run automated deployment
+./scripts/deploy.sh
 ```
 
-### 3. Deploy Frontend
+This creates:
+- DynamoDB table (PetStore)
+- Lambda function with Bedrock integration
+- IAM roles and policies
+- S3 bucket for frontend
+
+### 3. Deploy to Amplify (HTTPS)
+
+**Option A: Via Console (Recommended)**
+1. Go to [AWS Amplify Console](https://console.aws.amazon.com/amplify)
+2. Click "New app" → "Host web app"
+3. Connect GitHub repository
+4. Deploy!
+
+**Option B: Via CLI**
 ```bash
-# Create S3 bucket
-aws s3 mb s3://YOUR-BUCKET-NAME --region us-east-1
-
-# Configure for static website hosting
-aws s3 website s3://YOUR-BUCKET-NAME \
-  --index-document petstore-chat-secure.html
-
-# Upload HTML
-aws s3 cp frontend/petstore-chat-secure.html s3://YOUR-BUCKET-NAME/
-
-# Make public
-aws s3api put-bucket-policy \
-  --bucket YOUR-BUCKET-NAME \
-  --policy file://s3/bucket-policy.json
+npm install -g @aws-amplify/cli
+amplify init
+amplify add hosting
+amplify publish
 ```
+
+See [AMPLIFY_MANUAL_DEPLOY.md](docs/AMPLIFY_MANUAL_DEPLOY.md) for detailed steps.
 
 ### 4. Test
 ```bash
 # Open in browser
-open http://YOUR-BUCKET-NAME.s3-website-us-east-1.amazonaws.com/petstore-chat-secure.html
+open https://petstore.cloudopsinsights.com
 
 # Login with test user
 Username: testuser
@@ -261,52 +251,34 @@ response = bedrock.converse(
 # Lambda applies filters to DynamoDB results
 ```
 
-### Complete Request Flow (with Logs)
-
-See [docs/COMPLETE_FLOW_WITH_LOGS.md](docs/COMPLETE_FLOW_WITH_LOGS.md) for actual CloudWatch logs showing:
-- Browser request
-- API Gateway invocation
-- Lambda execution
-- Bedrock API call
-- DynamoDB query
-- Response timing (~600ms total)
-
 ## 📁 Repository Structure
 
 ```
 .
 ├── README.md                          # This file
+├── PROJECT_SUMMARY.md                 # Executive summary
 ├── docs/
-│   ├── ARCHITECTURE.md                # Detailed architecture diagrams
-│   ├── COMPLETE_FLOW_WITH_LOGS.md     # Request flow with actual logs
-│   ├── DEMO_QUESTIONS.md              # What you can/can't ask
-│   ├── SECURITY_IMPROVEMENTS.md       # Security best practices
-│   └── COST_ANALYSIS.md               # Cost breakdown
+│   ├── ARCHITECTURE.md                # Detailed architecture
+│   ├── EXAMPLE_LOGS.md                # Actual request logs
+│   ├── COST_ANALYSIS.md               # Cost breakdown
+│   ├── QUICK_START.md                 # 15-min setup guide
+│   ├── HTTPS_SETUP.md                 # HTTPS configuration
+│   ├── AMPLIFY_MANUAL_DEPLOY.md       # Amplify deployment
+│   ├── COMPLETE_FLOW_WITH_LOGS.md     # Request flow
+│   ├── DEMO_QUESTIONS.md              # What you can ask
+│   └── SECURITY_IMPROVEMENTS.md       # Security best practices
 ├── lambda/
-│   ├── lambda_function.py             # Main Lambda code
-│   └── requirements.txt               # Python dependencies
+│   └── lambda_function.py             # Main Lambda code
 ├── frontend/
 │   └── petstore-chat-secure.html      # Browser interface
 ├── iam/
-│   ├── lambda-trust-policy.json       # Lambda execution role trust
-│   ├── bedrock-policy.json            # Bedrock invoke permissions
-│   ├── dynamodb-policy.json           # DynamoDB access
-│   └── agentcore-gateway-role.json    # AgentCore Gateway role
-├── api-gateway/
-│   ├── openapi-spec.yaml              # API Gateway definition
-│   └── deployment-steps.md            # Step-by-step setup
-├── cognito/
-│   ├── user-pool-config.json          # Cognito configuration
-│   └── setup-steps.md                 # Authentication setup
-├── agentcore/
-│   ├── gateway-config.json            # Gateway target configuration
-│   └── setup-steps.md                 # MCP gateway setup
-├── s3/
-│   └── bucket-policy.json             # Public read policy
+│   ├── lambda-trust-policy.json       # Lambda execution role
+│   ├── bedrock-policy.json            # Bedrock permissions
+│   └── dynamodb-policy.json           # DynamoDB access
 └── scripts/
-    ├── deploy.sh                      # Full deployment script
-    ├── cleanup.sh                     # Resource cleanup
-    └── test-queries.sh                # Test various queries
+    ├── deploy.sh                      # Automated deployment
+    ├── setup-amplify.sh               # Amplify setup
+    └── setup-https-cloudfront.sh      # CloudFront HTTPS
 ```
 
 ## 🎓 What You'll Learn
@@ -317,6 +289,8 @@ See [docs/COMPLETE_FLOW_WITH_LOGS.md](docs/COMPLETE_FLOW_WITH_LOGS.md) for actua
 4. **Secure Authentication** - Cognito without hardcoded credentials
 5. **Cost Optimization** - Using cheapest models with fallback strategies
 6. **Observability** - CloudWatch logs for debugging and monitoring
+7. **HTTPS Deployment** - Free SSL with AWS Amplify
+8. **CI/CD** - Auto-deploy on git push
 
 ## 💰 Cost Analysis
 
@@ -326,15 +300,17 @@ See [docs/COMPLETE_FLOW_WITH_LOGS.md](docs/COMPLETE_FLOW_WITH_LOGS.md) for actua
 - **Lambda Execution:** ~$0.0000002 per request
 - **DynamoDB Read:** ~$0.00000025 per item
 - **API Gateway:** ~$0.0000035 per request
+- **Amplify Hosting:** $0.15 per GB served
 
 ### Monthly Estimate (1000 queries)
 - **LLM Calls (50%):** $0.05
 - **Lambda:** $0.0002
 - **DynamoDB:** $0.0003
 - **API Gateway:** $0.0035
-- **Total:** ~$0.054/month
+- **Amplify:** ~$0.50
+- **Total:** ~$0.56/month
 
-**Essentially free for demo purposes!**
+**Essentially minimal cost for a production app!**
 
 ## 🔒 Security Features
 
@@ -343,13 +319,15 @@ See [docs/COMPLETE_FLOW_WITH_LOGS.md](docs/COMPLETE_FLOW_WITH_LOGS.md) for actua
 3. **IAM Roles** - Least privilege access for Lambda
 4. **CORS Configuration** - Proper cross-origin handling
 5. **Input Validation** - Regex and type checking
+6. **HTTPS Only** - Free SSL via Amplify
+7. **Auto-Deploy** - Secure CI/CD pipeline
 
 ### Production Recommendations
-- Use Cognito Hosted UI
-- Enable HTTPS with CloudFront
-- Add rate limiting
-- Implement request signing
-- Enable CloudWatch alarms
+- ✅ Use Cognito Hosted UI
+- ✅ Enable HTTPS (done via Amplify)
+- ✅ Add rate limiting
+- ✅ Implement request signing
+- ✅ Enable CloudWatch alarms
 
 ## 📈 Monitoring & Debugging
 
@@ -373,20 +351,14 @@ aws logs tail /aws/apigateway/66gd6g08ie/prod --follow
 ### Manual Testing
 ```bash
 # Test LLM endpoint
-curl -X POST https://YOUR-API-ID.execute-api.us-east-1.amazonaws.com/prod/pets/query \
+curl -X POST https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query \
   -H "Content-Type: application/json" \
   -d '{"query":"expensive dogs under 700"}'
 
 # Test add pet
-curl -X POST https://YOUR-API-ID.execute-api.us-east-1.amazonaws.com/prod/pets \
+curl -X POST https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets \
   -H "Content-Type: application/json" \
   -d '{"name":"Max","type":"dog","breed":"Labrador","age":3,"price":500}'
-```
-
-### Automated Tests
-```bash
-cd scripts
-./test-queries.sh
 ```
 
 ## 🤝 Contributing
@@ -405,21 +377,29 @@ MIT License - see LICENSE file for details
 
 - AWS Bedrock team for Nova Micro model
 - AWS AgentCore team for MCP gateway
+- AWS Amplify team for seamless HTTPS deployment
 - Community feedback and testing
 
 ## 📞 Support
 
+- **Live Demo:** https://petstore.cloudopsinsights.com
 - **Issues:** https://github.com/catchmeraman/agentcore-api-gateway-integration-bedrock/issues
 - **Discussions:** https://github.com/catchmeraman/agentcore-api-gateway-integration-bedrock/discussions
 
 ## 🎯 Next Steps
 
-1. **Try the Demo** - Follow Quick Start guide
+1. **Try the Demo** - https://petstore.cloudopsinsights.com
 2. **Read the Docs** - Understand the architecture
 3. **Customize** - Adapt for your use case
-4. **Deploy** - Take it to production
+4. **Deploy** - Follow the Quick Start guide
 5. **Share** - Star the repo and spread the word!
 
 ---
 
 **Built with ❤️ using AWS Serverless + AI**
+
+**Live Demo:** https://petstore.cloudopsinsights.com
+**Cost:** ~$0.56/month for 1000 queries
+**Setup Time:** 15 minutes
+
+🎉 **Production-ready AI chatbot with HTTPS and auto-deploy!**
