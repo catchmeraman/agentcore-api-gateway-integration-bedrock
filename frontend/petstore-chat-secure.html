@@ -226,7 +226,17 @@
             }
             
             const totalCount = result.count || pets.length;
-            let response = `Found ${totalCount} pet${totalCount !== 1 ? 's' : ''}`;
+            const displayCount = pets.length;
+            
+            let response = '';
+            if (result.filters_applied && result.filters_applied.limit && displayCount < totalCount) {
+                response = `Showing ${displayCount} of ${totalCount} pets`;
+            } else if (displayCount === totalCount) {
+                response = `Found ${totalCount} pet${totalCount !== 1 ? 's' : ''}`;
+            } else {
+                response = `Showing ${displayCount} of ${totalCount} pets`;
+            }
+            
             if (result.filters_applied && !result.filters_applied.fallback) {
                 response += ` (🤖 AI via AgentCore Gateway → Bedrock)`;
             } else {
@@ -234,12 +244,12 @@
             }
             response += `:\n\n`;
             
-            response += pets.slice(0, 10).map(p => 
+            response += pets.map(p => 
                 `🐾 ${p.name} - ${p.type} (${p.breed})\n   Age: ${p.age} years | Price: $${p.price}`
             ).join('\n\n');
             
-            if (totalCount > 10) {
-                response += `\n\n... and ${totalCount - 10} more`;
+            if (totalCount > displayCount) {
+                response += `\n\n(${totalCount - displayCount} more available)`;
             }
             
             return response;
