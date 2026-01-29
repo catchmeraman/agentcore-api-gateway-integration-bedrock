@@ -32,9 +32,35 @@ A conversational AI chatbot that demonstrates:
 
 ## 🏗️ Complete Architecture
 
-### High-Level Flow
+![Complete Architecture Flow](./generated-diagrams/complete_architecture_flow.png)
 
-![AgentCore Complete Flow](./generated-diagrams/agentcore_complete_flow.png)
+### How It Works
+
+**Step 1: User Authentication**
+- User logs in with credentials
+- Amazon Cognito validates and returns JWT token
+
+**Step 2: MCP Gateway**
+- User sends natural language query: "list 5 costlier pets"
+- Amazon Bedrock AgentCore Gateway validates JWT
+- Routes to appropriate MCP tool (QueryPets)
+
+**Step 3: API Layer**
+- Amazon API Gateway receives REST API call
+- OpenAPI spec with operationIds for tool mapping
+
+**Step 4: Business Logic**
+- AWS Lambda function processes request
+- Calls Amazon Bedrock for query parsing
+
+**Step 5: AI & Data**
+- Bedrock Nova Micro extracts filters (limit=5, sort=price_desc)
+- Lambda queries DynamoDB with filters
+- Returns top 5 pets sorted by price
+
+**Step 6-8: Response Flow**
+- Lambda → API Gateway → AgentCore Gateway → Browser
+- User sees: "Showing 5 of 21 pets"
 
 ### Architecture Overview
 
