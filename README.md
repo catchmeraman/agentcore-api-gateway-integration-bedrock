@@ -64,6 +64,9 @@ A conversational AI chatbot that demonstrates:
 
 ### Architecture Overview
 
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/1132e45c-4737-46f0-9aef-9b6a81310199" />
+
+
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    USER BROWSER (HTTPS)                          │
