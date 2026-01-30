@@ -4,7 +4,7 @@
 
 ## 🌐 Live Demo
 
-**🎉 Try it now:** https://petstore.cloudopsinsights.com
+**🎉 Try it now:** https://<YOUR_CUSTOM_DOMAIN>
 
 **Login credentials:**
 - Username: `testuser`
@@ -67,7 +67,7 @@ A conversational AI chatbot that demonstrates:
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │                    USER BROWSER (HTTPS)                          │
-│              https://petstore.cloudopsinsights.com               │
+│              https://<YOUR_CUSTOM_DOMAIN>                        │
 │                  (petstore-chat-secure.html)                     │
 └────────────────────────────┬────────────────────────────────────┘
                              │
@@ -76,78 +76,72 @@ A conversational AI chatbot that demonstrates:
 ┌─────────────────────────────────────────────────────────────────┐
 │                      AWS AMPLIFY                                 │
 │                  (Hosting + CI/CD)                               │
-│              App ID: d1du8jz8xbjmnh                              │
+│              App ID: <AMPLIFY_APP_ID>                            │
 │              Auto-deploy on git push                             │
 └────────────────────────────┬────────────────────────────────────┘
                              │
-```
+                             │ HTTPS
+                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ 1. BROWSER (Frontend)                                           │
-│    https://petstore.cloudopsinsights.com                        │
-│    - User types: "Show me dogs under $300"                     │
-│    - Sends MCP request to AgentCore Gateway                    │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-                         │ MCP Protocol (tools/call)
-                         │ Authorization: Bearer <JWT>
-                         ▼
+│ 1. BROWSER (Frontend)                                            │
+│ https://<YOUR_CUSTOM_DOMAIN>                                     │
+│ - User types: "Show me dogs under $300"                          │
+│ - Sends MCP request to AgentCore Gateway                         │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             │ MCP Protocol (tools/call)
+                             │ Authorization: Bearer <JWT>
+                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ 2. AGENTCORE GATEWAY (MCP Server)                               │
-│    Gateway ID: petstoregateway-remqjziohl                       │
-│                                                                  │
-│    Exposes 4 MCP Tools:                                         │
-│    • PetStoreTarget___ListPets                                  │
-│    • PetStoreTarget___GetPetById                                │
-│    • PetStoreTarget___AddPet                                    │
-│    • PetStoreTarget___QueryPets                                 │
-│                                                                  │
-│    - Validates JWT token from Cognito                           │
-│    - Routes to API Gateway using IAM role                       │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-                         │ HTTPS REST API (IAM Role)
-                         ▼
+│ 2. AGENTCORE GATEWAY (MCP Server)                                │
+│ Gateway ID: <GATEWAY_ID>                                         │
+│                                                                   │
+│ Exposes 4 MCP Tools:                                             │
+│ • PetStoreTarget___ListPets                                      │
+│ • PetStoreTarget___GetPetById                                    │
+│ • PetStoreTarget___AddPet                                        │
+│ • PetStoreTarget___QueryPets                                     │
+│                                                                   │
+│ - Validates JWT token from Cognito                               │
+│ - Routes to API Gateway using IAM role                           │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             │ HTTPS REST API (IAM Role)
+                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ 3. API GATEWAY (REST API)                                       │
-│    ID: 66gd6g08ie                                               │
-│                                                                  │
-│    Endpoints:                                                    │
-│    • GET  /pets          → ListPets                            │
-│    • GET  /pets/{id}     → GetPetById                          │
-│    • POST /pets          → AddPet                              │
-│    • POST /pets/query    → QueryPets (LLM-powered)            │
-│                                                                  │
-│    - No auth required (trusts AgentCore Gateway IAM role)      │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-                         │ Lambda Proxy Integration
-                         ▼
+│ 3. API GATEWAY (REST API)                                        │
+│ ID: <API_GATEWAY_ID>                                             │
+│                                                                   │
+│ Endpoints:                                                        │
+│ • GET /pets → ListPets                                           │
+│ • GET /pets/{id} → GetPetById                                    │
+│ • POST /pets → AddPet                                            │
+│ • POST /pets/query → QueryPets (LLM-powered)                     │
+│                                                                   │
+│ - No auth required (trusts AgentCore Gateway IAM role)           │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             │ Lambda Proxy Integration
+                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│ 4. LAMBDA FUNCTION (PetStoreFunction)                           │
-│                                                                  │
-│    For QueryPets endpoint:                                      │
-│    1. Receives: {"query": "Show me dogs under $300"}          │
-│    2. Calls Bedrock Nova Micro:                                │
-│       "Extract filters from this query"                        │
-│    3. Bedrock returns: {"type": "dog", "max_price": 300}      │
-│    4. Queries DynamoDB with filters                            │
-│    5. Returns matching pets                                     │
-│                                                                  │
-│    For other endpoints:                                         │
-│    - Direct DynamoDB operations (no Bedrock)                   │
-└────────────────────────┬────────────────────────────────────────┘
-                         │
-                         ├──────────────┐
-                         │              │
-                         ▼              ▼
-              ┌──────────────┐  ┌──────────────┐
-              │ 5a. BEDROCK  │  │ 5b. DYNAMODB │
-              │  Nova Micro  │  │  PetStore    │
-              │              │  │   Table      │
-              │ (LLM for     │  │              │
-              │  query       │  │ (Pet data:   │
-              │  parsing)    │  │  30+ pets)   │
-              └──────────────┘  └──────────────┘
+│ 4. LAMBDA FUNCTION (PetStoreFunction)                            │
+│                                                                   │
+│ For QueryPets endpoint:                                          │
+│ 1. Receives: {"query": "Show me dogs under $300"}               │
+│ 2. Calls Bedrock to extract filters                             │
+│ 3. Queries DynamoDB with extracted parameters                    │
+│ 4. Returns filtered results                                      │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ├─────────────────┐
+                             │                 │
+                             ▼                 ▼
+              ┌──────────────────┐  ┌──────────────────┐
+              │ 5. AMAZON BEDROCK│  │ 6. DYNAMODB      │
+              │ Nova Micro Model │  │ PetStore Table   │
+              │ - Query parsing  │  │ - Pet data       │
+              │ - Filter extract │  │ - CRUD ops       │
+              └──────────────────┘  └──────────────────┘
 ```
 
 ### 🔄 Complete Request Flow
@@ -172,7 +166,7 @@ POST https://petstoregateway-xxx.amazonaws.com/mcp
 - Assumes IAM role
 - Maps MCP tool to REST endpoint
 ```
-POST https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query
+POST https://<API_GATEWAY_ID>.execute-api.us-east-1.amazonaws.com/prod/pets/query
 {"query": "Show me dogs under $300"}
 ```
 
@@ -307,7 +301,7 @@ See [AMPLIFY_MANUAL_DEPLOY.md](docs/AMPLIFY_MANUAL_DEPLOY.md) for detailed steps
 ### 4. Test
 ```bash
 # Open in browser
-open https://petstore.cloudopsinsights.com
+open https://<YOUR_CUSTOM_DOMAIN>
 
 # Login with test user
 Username: testuser
@@ -481,7 +475,7 @@ response = bedrock.converse(
 aws logs tail /aws/lambda/PetStoreFunction --follow
 
 # API Gateway logs (enable first)
-aws logs tail /aws/apigateway/66gd6g08ie/prod --follow
+aws logs tail /aws/apigateway/<API_GATEWAY_ID>/prod --follow
 ```
 
 ### Key Metrics
@@ -495,12 +489,12 @@ aws logs tail /aws/apigateway/66gd6g08ie/prod --follow
 ### Manual Testing
 ```bash
 # Test LLM endpoint
-curl -X POST https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query \
+curl -X POST https://<API_GATEWAY_ID>.execute-api.us-east-1.amazonaws.com/prod/pets/query \
   -H "Content-Type: application/json" \
   -d '{"query":"expensive dogs under 700"}'
 
 # Test add pet
-curl -X POST https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets \
+curl -X POST https://<API_GATEWAY_ID>.execute-api.us-east-1.amazonaws.com/prod/pets \
   -H "Content-Type: application/json" \
   -d '{"name":"Max","type":"dog","breed":"Labrador","age":3,"price":500}'
 ```
@@ -548,13 +542,13 @@ MIT License - see LICENSE file for details
 
 ## 📞 Support
 
-- **Live Demo:** https://petstore.cloudopsinsights.com
+- **Live Demo:** https://<YOUR_CUSTOM_DOMAIN>
 - **Issues:** https://github.com/catchmeraman/agentcore-api-gateway-integration-bedrock/issues
 - **Discussions:** https://github.com/catchmeraman/agentcore-api-gateway-integration-bedrock/discussions
 
 ## 🎯 Next Steps
 
-1. **Try the Demo** - https://petstore.cloudopsinsights.com
+1. **Try the Demo** - https://<YOUR_CUSTOM_DOMAIN>
 2. **Read the Docs** - Understand the architecture
 3. **Customize** - Adapt for your use case
 4. **Deploy** - Follow the Quick Start guide
@@ -564,7 +558,7 @@ MIT License - see LICENSE file for details
 
 **Built with ❤️ using AWS Serverless + AI**
 
-**Live Demo:** https://petstore.cloudopsinsights.com
+**Live Demo:** https://<YOUR_CUSTOM_DOMAIN>
 **Cost:** ~$0.56/month for 1000 queries
 **Setup Time:** 15 minutes
 
