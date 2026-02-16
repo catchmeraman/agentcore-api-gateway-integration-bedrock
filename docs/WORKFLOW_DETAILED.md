@@ -429,7 +429,7 @@ Processing: CORS check, auth validation, proxy integration
   "integration": {
     "type": "AWS_PROXY",
     "httpMethod": "POST",
-    "uri": "arn:aws:lambda:us-east-1:114805761158:function:PetStoreFunction"
+    "uri": "arn:aws:lambda:us-east-1:1xxxxxxxx:function:PetStoreFunction"
   }
 }
 ```
