@@ -2,9 +2,9 @@
 
 ## Gateway Status
 
-✅ **Gateway Exists**: `petstoregateway-remqjziohl`  
-✅ **Gateway URL**: `https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp`  
-✅ **IAM Role**: `arn:aws:iam::114805761158:role/AgentCoreGatewayRole`  
+✅ **Gateway Exists**: `petstoregateway-xxxxxxx`  
+✅ **Gateway URL**: `https://petstoregateway-rxxxxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp`  
+✅ **IAM Role**: `arn:aws:iam::1xxxxxxxxx:role/AgentCoreGatewayRole`  
 ✅ **Frontend**: Updated with gateway URL  
 ⚠️ **Tools**: Need to be configured (currently only has search tool)
 
@@ -14,7 +14,7 @@
 
 1. Open AWS Console: https://console.aws.amazon.com/bedrock/
 2. Navigate to: **AgentCore** → **Gateways**
-3. Find gateway: `petstoregateway-remqjziohl`
+3. Find gateway: `petstoregateway-rxxxxxxx`
 4. Click **Edit** or **Configure Tools**
 
 ### Step 2: Add 4 Tools
@@ -115,20 +115,20 @@ Click **Save** or **Update Gateway**
 # Get token
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
-  --client-id 435iqd7cgbn2slmgn0a36fo9lf \
+  --client-id xxxxxxx \
   --auth-parameters USERNAME=testuser,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text \
   --region us-east-1)
 
 # List tools (should show 4 tools now)
-curl -X POST https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
+curl -X POST https://petstoregateway-xxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | jq '.result.tools[].name'
 
 # Test ListPets
-curl -X POST https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
+curl -X POST https://petstoregateway-xxxxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d '{
@@ -148,7 +148,7 @@ The frontend is already updated and will auto-deploy via Amplify.
 
 Check deployment status:
 ```bash
-aws amplify list-jobs --app-id d1du8jz8xbjmnh --branch-name main --region us-east-1 --max-items 1
+aws amplify list-jobs --app-id xxxxxxxxx --branch-name main --region us-east-1 --max-items 1
 ```
 
 ## Expected Result
