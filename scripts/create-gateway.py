@@ -10,9 +10,9 @@ bedrock_agent = boto3.client('bedrock-agent', region_name='us-east-1')
 
 # Configuration
 GATEWAY_NAME = 'PetStoreGateway'
-API_GATEWAY_ID = '66gd6g08ie'
+API_GATEWAY_ID = 'xxxxxxxxx'
 STAGE = 'prod'
-IAM_ROLE_ARN = 'arn:aws:iam::114805761158:role/AgentCoreGatewayRole'
+IAM_ROLE_ARN = 'arn:aws:iam::11xxxxxxxxx:role/AgentCoreGatewayRole'
 
 print(f"Creating AgentCore Gateway: {GATEWAY_NAME}")
 print(f"API Gateway ID: {API_GATEWAY_ID}")
@@ -27,7 +27,7 @@ try:
         gatewayConfiguration={
             'apiGatewayProxyConfiguration': {
                 'apiGatewayId': API_GATEWAY_ID,
-                'resourceArn': f'arn:aws:execute-api:us-east-1:114805761158:{API_GATEWAY_ID}/{STAGE}/*',
+                'resourceArn': f'arn:aws:execute-api:us-east-1:1xxxxxxxxx:{API_GATEWAY_ID}/{STAGE}/*',
                 'stage': STAGE
             }
         },
