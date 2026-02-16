@@ -119,7 +119,7 @@ curl -s https://petstoregateway-r.gateway.bedrock-agentcore.us-east-1.amazonaws.
 ```bash
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
-  --client-id 435iqd7cgbn2s \
+  --client-id 435iqxxxxxx \
   --auth-parameters USERNAME=user,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text \
