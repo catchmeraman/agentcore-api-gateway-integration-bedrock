@@ -68,8 +68,8 @@ aws cloudfront create-distribution \
 ```bash
 # Configure OAuth with HTTPS callback
 aws cognito-idp update-user-pool-client \
-  --user-pool-id us-east-1_RNmMBC87g \
-  --client-id 435iqd7cgbn2slmgn0a36fo9lf \
+  --user-pool-id us-east-1_xxxxxxxx \
+  --client-id 4xxxxxxxx \
   --allowed-o-auth-flows "code" \
   --allowed-o-auth-scopes "openid" \
   --callback-urls "https://your-domain.com/callback"
