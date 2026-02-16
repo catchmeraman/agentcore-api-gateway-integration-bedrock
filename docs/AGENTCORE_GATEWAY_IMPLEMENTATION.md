@@ -4,7 +4,7 @@
 
 ### ✅ Implemented Components
 
-1. **API Gateway** (ID: `66gd6g08ie`)
+1. **API Gateway** (ID: `xxxxxxxxx`)
    - GET /pets - List all pets
    - GET /pets/{id} - Get pet by ID
    - POST /pets - Add new pet
@@ -19,7 +19,7 @@
    - 30+ pets loaded
    - On-demand billing
 
-4. **Cognito User Pool** (`us-east-1_RNmMBC87g`)
+4. **Cognito User Pool** (`us-east-1_xxxxxxxxx`)
    - User: testuser
    - JWT authentication
 
@@ -68,7 +68,7 @@ cat > /tmp/gateway-api-policy.json << 'EOF'
       "execute-api:Invoke",
       "execute-api:ManageConnections"
     ],
-    "Resource": "arn:aws:execute-api:us-east-1:*:66gd6g08ie/*"
+    "Resource": "arn:aws:execute-api:us-east-1:*:xxxxxxxxx/*"
   }]
 }
 EOF
@@ -93,7 +93,7 @@ aws iam get-role --role-name AgentCoreGatewayRole --query 'Role.Arn' --output te
    - **Name**: `PetStoreGateway`
    - **Description**: `MCP gateway for Pet Store API`
    - **Target Type**: API Gateway
-   - **API Gateway ID**: `66gd6g08ie`
+   - **API Gateway ID**: `xxxxxxxxx`
    - **Stage**: `prod`
    - **IAM Role**: `AgentCoreGatewayRole` (from Step 1)
 
@@ -148,8 +148,8 @@ aws iam get-role --role-name AgentCoreGatewayRole --query 'Role.Arn' --output te
 
 5. **Authentication**:
    - Type: JWT (Cognito)
-   - User Pool: `us-east-1_RNmMBC87g`
-   - Client ID: `435iqd7cgbn2slmgn0a36fo9lf`
+   - User Pool: `us-east-1_xxxxxxxxx`
+   - Client ID: `435ixxxxxxxxx`
 
 6. Click "Create"
 
@@ -160,8 +160,8 @@ After creating the gateway, update the frontend with the gateway URL:
 ```javascript
 // In frontend/petstore-chat-secure.html
 const CONFIG = {
-    userPoolId: 'us-east-1_RNmMBC87g',
-    clientId: '435iqd7cgbn2slmgn0a36fo9lf',
+    userPoolId: 'us-east-1_xxxxxxxxx',
+    clientId: '435xxxxxxxxx',
     region: 'us-east-1',
     gatewayUrl: 'https://<gateway-id>.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp'
 };
@@ -176,7 +176,7 @@ cd /Users/ramandeep_chandna/agentcore-api-gateway-integration-bedrock
 
 # Deploy to Amplify
 aws amplify start-deployment \
-  --app-id d1du8jz8xbjmnh \
+  --app-id xxxxxxxxx \
   --branch-name main \
   --region us-east-1
 ```
@@ -196,7 +196,7 @@ response = bedrock.create_gateway(
     description='MCP gateway for Pet Store API',
     targetConfig={
         'apiGateway': {
-            'apiGatewayId': '66gd6g08ie',
+            'apiGatewayId': 'xxxxxxxxx',
             'stage': 'prod',
             'roleArn': '<IAM_ROLE_ARN_FROM_STEP_1>'
         }
@@ -204,8 +204,8 @@ response = bedrock.create_gateway(
     authConfig={
         'type': 'JWT',
         'jwtConfig': {
-            'userPoolId': 'us-east-1_RNmMBC87g',
-            'clientId': '435iqd7cgbn2slmgn0a36fo9lf'
+            'userPoolId': 'us-east-1_xxxxxxxxx',
+            'clientId': '435xxxxxxxxx'
         }
     }
 )
@@ -222,8 +222,8 @@ print(f"Gateway URL: {response['gatewayUrl']}")
 # Get JWT token first
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
-  --client-id 435iqd7cgbn2slmgn0a36fo9lf \
-  --auth-parameters USERNAME=testuser,PASSWORD=******** \
+  --client-id 4xxxxxxxxx \
+  --auth-parameters USERNAME=texxxxxxxxx,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text)
 
