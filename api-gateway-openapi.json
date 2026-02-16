@@ -17,7 +17,7 @@
         "x-amazon-apigateway-integration": {
           "type": "aws_proxy",
           "httpMethod": "POST",
-          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:1xxx805761158:function:PetStoreFunction/invocations"
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:1xxx:function:PetStoreFunction/invocations"
         }
       },
       "post": {
@@ -58,7 +58,7 @@
         "x-amazon-apigateway-integration": {
           "type": "aws_proxy",
           "httpMethod": "POST",
-          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:11xxxx05761158:function:PetStoreFunction/invocations"
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:11xxxx:function:PetStoreFunction/invocations"
         }
       },
       "options": {
@@ -126,7 +126,7 @@
         "x-amazon-apigateway-integration": {
           "type": "aws_proxy",
           "httpMethod": "POST",
-          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:114805761158:function:PetStoreFunction/invocations"
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:11xxxxxxx:function:PetStoreFunction/invocations"
         }
       },
       "options": {
@@ -199,7 +199,7 @@
         "x-amazon-apigateway-integration": {
           "type": "aws_proxy",
           "httpMethod": "POST",
-          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:1148xxxx158:function:PetStoreFunction/invocations"
+          "uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:1148xxxxxxxx:function:PetStoreFunction/invocations"
         }
       },
       "options": {
