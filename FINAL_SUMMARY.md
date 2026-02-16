@@ -58,7 +58,7 @@ Lambda Function
 ## 🏗️ Architecture Components
 
 ### 1. Frontend (AWS Amplify)
-- **App ID:** d1du8jz8xbjmnh
+- **App ID:** xxxxxxxxx
 - **Domain:** petstore.cloudopsinsights.com
 - **SSL:** Free certificate (auto-renewed)
 - **Deployment:** Auto from GitHub (main branch)
@@ -71,15 +71,15 @@ Lambda Function
 - Clear display messages ("Showing X of Y pets")
 
 ### 2. Authentication (AWS Cognito)
-- **User Pool:** us-east-1_RNmMBC87g
-- **Client ID:** 435iqd7cgbn2slmgn0a36fo9lf
+- **User Pool:** us-east-1_xxxxxxxxx
+- **Client ID:** xxxxxxxxx
 - **Test User:** testuser / ********
 - **Token Type:** JWT (1034 characters)
 - **Expiration:** 1 hour
 
 ### 3. AgentCore Gateway
-- **Gateway ID:** petstoregateway-remqjziohl
-- **URL:** https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp
+- **Gateway ID:** petstoregateway-xxxxxxxxx
+- **URL:** https://petstoregateway-xxxxxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp
 - **Protocol:** MCP (Model Context Protocol)
 - **Authentication:** JWT validation
 - **IAM Role:** AgentCoreGatewayRole
@@ -91,7 +91,7 @@ Lambda Function
 4. `PetStoreTarget___QueryPets` - POST /pets/query (LLM-powered)
 
 ### 4. API Gateway
-- **API ID:** 66gd6g08ie
+- **API ID:** xxxxxxxxx
 - **Stage:** prod
 - **Region:** us-east-1
 - **OpenAPI Spec:** Includes operationIds for all methods
@@ -262,14 +262,14 @@ agentcore-api-gateway-integration-bedrock/
 # 1. Get JWT token
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
-  --client-id 435iqd7cgbn2slmgn0a36fo9lf \
+  --client-id xxxxxxxxx \
   --auth-parameters USERNAME=testuser,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text \
   --region us-east-1)
 
 # 2. Test QueryPets via Gateway
-curl -X POST https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
+curl -X POST https://petstoregateway-xxxxxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d '{
@@ -318,7 +318,7 @@ aws lambda update-function-code \
 
 # Trigger Amplify deployment
 aws amplify start-job \
-  --app-id d1du8jz8xbjmnh \
+  --app-id xxxxxxxxx \
   --branch-name main \
   --job-type RELEASE \
   --region us-east-1
