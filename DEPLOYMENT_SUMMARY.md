@@ -6,7 +6,7 @@
 **Status:** ✅ LIVE AND OPERATIONAL
 
 **Login Credentials:**
-- Username: `testuser`
+- Username: `xxxxxxxxx`
 - Password: `********`
 
 ---
@@ -17,13 +17,13 @@
 
 | Component | ID/Name | Status | Purpose |
 |-----------|---------|--------|---------|
-| **AWS Amplify** | d1du8jz8xbjmnh | ✅ Active | HTTPS hosting + CI/CD |
+| **AWS Amplify** | xxxxxxxxx | ✅ Active | HTTPS hosting + CI/CD |
 | **Custom Domain** | petstore.cloudopsinsights.com | ✅ Active | Production URL |
 | **SSL Certificate** | Auto-generated | ✅ Active | Free HTTPS |
-| **API Gateway** | 66gd6g08ie | ✅ Active | REST API endpoints |
+| **API Gateway** | xxxxxxxxx | ✅ Active | REST API endpoints |
 | **Lambda Function** | PetStoreFunction | ✅ Active | Business logic + LLM |
 | **DynamoDB Table** | PetStore | ✅ Active | Pet data storage |
-| **Cognito User Pool** | us-east-1_RNmMBC87g | ✅ Active | Authentication |
+| **Cognito User Pool** | us-east-1_xxxxxxxxx | ✅ Active | Authentication |
 | **Bedrock Model** | Nova Micro | ✅ Active | Natural language AI |
 
 ### Deployment Timeline
@@ -56,10 +56,10 @@ Total Time: ~8 hours
 
 **Frontend:**
 - Production: https://petstore.cloudopsinsights.com
-- Amplify Default: https://main.d1du8jz8xbjmnh.amplifyapp.com
+- Amplify Default: https://main.xxxxxxxxx.amplifyapp.com
 
 **Backend:**
-- API Gateway: https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod
+- API Gateway: https://xxxxxxxxx.execute-api.us-east-1.amazonaws.com/prod
 - Endpoints:
   - GET /pets - List all pets
   - GET /pets/{id} - Get specific pet
@@ -310,7 +310,7 @@ aws cloudwatch put-metric-alarm \
 ```bash
 # Check Cognito user
 aws cognito-idp admin-get-user \
-  --user-pool-id us-east-1_RNmMBC87g \
+  --user-pool-id us-east-1_xxxxxxxxx\
   --username testuser \
   --region us-east-1
 ```
@@ -325,7 +325,7 @@ aws logs tail /aws/lambda/PetStoreFunction --since 5m | grep "LLM"
 ```bash
 # Verify OPTIONS method
 aws apigateway get-method \
-  --rest-api-id 66gd6g08ie \
+  --rest-api-id xxxxxxxxx \
   --resource-id RESOURCE_ID \
   --http-method OPTIONS
 ```
