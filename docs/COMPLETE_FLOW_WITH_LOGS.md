@@ -16,8 +16,8 @@
                            ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                      AMAZON COGNITO                                  │
-│  User Pool: us-east-1_RNmMBC87g                                     │
-│  Client ID: 435iqd7cgbn2slmgn0a36fo9lf                             │
+│  User Pool: us-east-1_xxxxxxxxx                                   │
+│  Client ID: 435ixxxxxxxxx                           │
 │                                                                      │
 │  ✅ Returns JWT Access Token                                        │
 └──────────────────────────┬──────────────────────────────────────────┘
@@ -27,8 +27,8 @@
                            ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                   AGENTCORE GATEWAY (MCP)                           │
-│  Gateway ID: petstoregateway-remqjziohl                             │
-│  URL: https://petstoregateway-remqjziohl.gateway                   │
+│  Gateway ID: petstoregateway-xxxxxxxxx                            │
+│  URL: https://petstoregateway-xxxxxxxxx.gateway                   │
 │       .bedrock-agentcore.us-east-1.amazonaws.com/mcp               │
 │                                                                      │
 │  Request Body:                                                       │
@@ -53,7 +53,7 @@
 │                      API GATEWAY (REST)                              │
 │  API ID: 66gd6g08ie                                                 │
 │  Stage: prod                                                         │
-│  Endpoint: https://66gd6g08ie.execute-api.us-east-1                │
+│  Endpoint: https://xxxxxxxxx.execute-api.us-east-1                │
 │            .amazonaws.com/prod/pets                                 │
 │                                                                      │
 │  Method: GET /pets                                                   │
@@ -80,9 +80,9 @@
 │    "httpMethod": "GET",                                             │
 │    "headers": {...},                                                │
 │    "requestContext": {                                              │
-│      "accountId": "114805761158",                                   │
+│      "accountId": "1xxxxxxxxx",                                   │
 │      "identity": {                                                  │
-│        "caller": "AROARVOXU4SDCBTYPZWFH:gateway-session-...",      │
+│        "caller": "xxxxxxxxx:gateway-session-...",      │
 │        "userArn": "arn:aws:sts::114805761158:assumed-role/         │
 │                    AgentCoreGatewayRole/gateway-session-..."        │
 │      }                                                               │
@@ -189,7 +189,7 @@
 
 ### [1] Cognito Authentication Log
 ```
-✅ Token obtained: eyJraWQiOiJqQ0JrZXBrdlpVU3o2TnRmbjJqVm53WjIzMXZIVV...
+✅ Token obtained: eyJraWQixxxxxxxxx...
 ```
 
 ### [2] AgentCore Gateway Request
@@ -218,18 +218,18 @@ Response: HTTP 200 OK
   "path": "/pets",
   "httpMethod": "GET",
   "headers": {
-    "Host": "66gd6g08ie.execute-api.us-east-1.amazonaws.com",
+    "Host": "xxxxxxxxx.execute-api.us-east-1.amazonaws.com",
     "User-Agent": "Apache-HttpAsyncClient/UNAVAILABLE (Java/21.0.9)",
-    "X-Amz-Security-Token": "IQoJb3JpZ2luX2VjEL3//////////wEa..."
+    "X-Amz-Security-Token": "IQxxxxxxxxxEL3//////////wEa..."
   },
   "requestContext": {
     "accountId": "114805761158",
     "apiId": "66gd6g08ie",
     "stage": "prod",
     "identity": {
-      "caller": "AROARVOXU4SDCBTYPZWFH:gateway-session-c375f14c-7930-490f-bb16-b37aa0caf042",
+      "caller": "xxxxxxxxxWFH:gateway-session-c375f14c-793xxxxxxxxxaa0caf042",
       "sourceIp": "34.239.241.190",
-      "userArn": "arn:aws:sts::114805761158:assumed-role/AgentCoreGatewayRole/gateway-session-c375f14c-7930-490f-bb16-b37aa0caf042"
+      "userArn": "arn:aws:sts::114805761158:assumed-role/AgentCoreGatewayRole/gateway-session-c375f14c-7xxxxxxxxxaa0caf042"
     }
   }
 }
@@ -239,13 +239,13 @@ Response: HTTP 200 OK
 
 ### [4] Lambda Execution Log
 ```
-2026-01-29T12:47:28 START RequestId: df38ecd9-8ebc-403d-b8fb-df77f2fd4b84 Version: $LATEST
+2026-01-29T12:47:28 START RequestId: xxxxxxxxxf2fd4b84 Version: $LATEST
 
 2026-01-29T12:47:28 Event: {"resource": "/pets", "path": "/pets", "httpMethod": "GET", ...}
 
-2026-01-29T12:47:29 END RequestId: df38ecd9-8ebc-403d-b8fb-df77f2fd4b84
+2026-01-29T12:47:29 END RequestId: xxxxxxxxx
 
-2026-01-29T12:47:29 REPORT RequestId: df38ecd9-8ebc-403d-b8fb-df77f2fd4b84
+2026-01-29T12:47:29 REPORT RequestId: xxxxxxxxx
     Duration: 251.37 ms
     Billed Duration: 252 ms
     Memory Size: 128 MB
@@ -288,7 +288,7 @@ $ aws dynamodb scan --table-name PetStore --limit 1
 ## 🔑 KEY EVIDENCE POINTS
 
 ### 1. **AgentCore Gateway Involvement**
-- Lambda event shows `userArn`: `arn:aws:sts::114805761158:assumed-role/AgentCoreGatewayRole/gateway-session-...`
+- Lambda event shows `userArn`: `arn:aws:sts::11xxxxxxxxx:assumed-role/AgentCoreGatewayRole/gateway-session-...`
 - User-Agent: `Apache-HttpAsyncClient/UNAVAILABLE (Java/21.0.9)` (Gateway's HTTP client)
 - Source IP: `34.239.241.190` (AWS service IP, not user's browser)
 
@@ -336,7 +336,7 @@ aws logs tail /aws/lambda/PetStoreFunction --since 5m --format short --region us
 aws dynamodb scan --table-name PetStore --select COUNT --region us-east-1
 
 # Test Gateway endpoint
-curl -X POST https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
+curl -X POST https://petstoregateway-xxxxxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"PetStoreTarget___ListPets","arguments":{}}}'
