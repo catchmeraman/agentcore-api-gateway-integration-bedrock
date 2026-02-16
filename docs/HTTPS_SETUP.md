@@ -310,10 +310,10 @@ After deploying with HTTPS, update your frontend:
 ```javascript
 // frontend/petstore-chat-secure.html
 const CONFIG = {
-    userPoolId: 'us-east-1_RNmMBC87g',
-    clientId: '435iqd7cgbn2slmgn0a36fo9lf',
+    userPoolId: 'us-east-1_xxxxxxxx',
+    clientId: '4xxxxxxxx',
     region: 'us-east-1',
-    apiUrl: 'https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod'
+    apiUrl: 'https://xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod'
     // API Gateway already has HTTPS!
 };
 ```
