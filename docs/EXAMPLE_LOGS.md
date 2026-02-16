@@ -28,7 +28,7 @@ This document shows actual CloudWatch logs from a complete request flow, demonst
 // User types: "Show me expensive dogs"
 console.log('Sending query:', userMessage);
 
-fetch('https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query', {
+fetch('https://xxxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/pets/query', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ fetch('https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query', 
 
 **Network Tab:**
 ```
-Request URL: https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query
+Request URL: https://xxxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/pets/query
 Request Method: POST
 Status Code: 200 OK
 Remote Address: 3.172.73.103:443
@@ -58,12 +58,12 @@ Request Payload:
 
 ## 2. API Gateway Logs
 
-**CloudWatch Log Group:** `/aws/apigateway/66gd6g08ie/prod`
+**CloudWatch Log Group:** `/aws/apigateway/xxxxxxxxx/prod`
 
 ```
 2026-01-29T14:52:00.123Z [INFO] Incoming request
 {
-  "requestId": "c2bdbdab-f745-40b4-8f7c-ec75a98173c2",
+  "requestId": "xxxxxxxxx-40b4-8f7c-ec75a98173c2",
   "ip": "106.215.182.127",
   "requestTime": "29/Jan/2026:14:52:00 +0000",
   "httpMethod": "POST",
@@ -78,7 +78,7 @@ Request Payload:
 ```
 2026-01-29T14:52:00.125Z [INFO] Invoking Lambda function
 {
-  "functionArn": "arn:aws:lambda:us-east-1:114805761158:function:PetStoreFunction",
+  "functionArn": "arn:aws:lambda:us-east-1:xxxxxxxxx:function:PetStoreFunction",
   "integrationLatency": 520,
   "integrationStatus": 200
 }
@@ -92,7 +92,7 @@ Request Payload:
 
 ### START
 ```
-START RequestId: 841497d8-8980-419b-8b03-6a3fdf97406f Version: $LATEST
+START RequestId: 84xxxxxxxxx9b-8b03-6a3fdf97406f Version: $LATEST
 ```
 
 ### Event Received
@@ -105,7 +105,7 @@ START RequestId: 841497d8-8980-419b-8b03-6a3fdf97406f Version: $LATEST
   "headers": {
     "Accept": "application/json",
     "Content-Type": "application/json",
-    "Host": "66gd6g08ie.execute-api.us-east-1.amazonaws.com",
+    "Host": "xxxxxxxxx.execute-api.us-east-1.amazonaws.com",
     "origin": "http://petstore-chat-v2.s3-website-us-east-1.amazonaws.com"
   },
   "body": "{\"query\":\"Show me expensive dogs\"}",
@@ -375,7 +375,7 @@ Cost: $0.000004
 
 ### 1. Bedrock Permission Error (Fixed)
 ```
-2026-01-29T14:51:09 LLM Error: An error occurred (AccessDeniedException) when calling the Converse operation: User: arn:aws:sts::114805761158:assumed-role/PetStoreLambdaRole/PetStoreFunction is not authorized to perform: bedrock:InvokeModel on resource: arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-micro-v1:0
+2026-01-29T14:51:09 LLM Error: An error occurred (AccessDeniedException) when calling the Converse operation: User: arn:aws:sts::xxxxxxxx:assumed-role/PetStoreLambdaRole/PetStoreFunction is not authorized to perform: bedrock:InvokeModel on resource: arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-micro-v1:0
 
 2026-01-29T14:51:09 [INFO] Falling back to keyword matching
 2026-01-29T14:51:09 [INFO] Fallback result: 6 pets found
@@ -385,7 +385,7 @@ Cost: $0.000004
 
 ### 2. CORS Error (Fixed)
 ```
-Access to fetch at 'https://66gd6g08ie.execute-api.us-east-1.amazonaws.com/prod/pets/query' from origin 'http://petstore-chat-v2.s3-website-us-east-1.amazonaws.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+Access to fetch at 'https://6xxxxxxxx.execute-api.us-east-1.amazonaws.com/prod/pets/query' from origin 'http://petstore-chat-v2.s3-website-us-east-1.amazonaws.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
 ```
 
 **Resolution:** Added OPTIONS method handler in Lambda
