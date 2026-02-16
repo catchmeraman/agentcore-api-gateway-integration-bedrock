@@ -3,8 +3,8 @@
 ## Status: IAM Role Ready ✅
 
 The IAM role `AgentCoreGatewayRole` has been created with proper permissions:
-- **Role ARN**: `arn:aws:iam::114805761158:role/AgentCoreGatewayRole`
-- **Permissions**: API Gateway invoke access for `66gd6g08ie`
+- **Role ARN**: `arn:aws:iam::1xxxxxxxxxx:role/AgentCoreGatewayRole`
+- **Permissions**: API Gateway invoke access for `xxxxxxxxx`
 
 ## Next Step: Create Gateway via AWS Console
 
@@ -25,9 +25,9 @@ AgentCore Gateway creation is currently only available through:
 
 3. **Configure Target**:
    - **Target Type**: API Gateway
-   - **API Gateway ID**: `66gd6g08ie`
+   - **API Gateway ID**: `xxxxxxxxx`
    - **Stage**: `prod`
-   - **IAM Role ARN**: `arn:aws:iam::114805761158:role/AgentCoreGatewayRole`
+   - **IAM Role ARN**: `arn:aws:iam::11xxxxxxxxx:role/AgentCoreGatewayRole`
 
 4. **Configure Tools** (4 tools):
 
@@ -113,8 +113,8 @@ AgentCore Gateway creation is currently only available through:
 
 5. **Authentication** (Optional):
    - Type: JWT (Cognito)
-   - User Pool ID: `us-east-1_RNmMBC87g`
-   - Client ID: `435iqd7cgbn2slmgn0a36fo9lf`
+   - User Pool ID: `us-east-1_xxxxxxxxx`
+   - Client ID: `xxxxxxxxx`
 
 6. **Create Gateway**:
    - Click "Create"
@@ -123,10 +123,10 @@ AgentCore Gateway creation is currently only available through:
 
 ### Option 2: Use Existing Gateway
 
-If you already have gateway `petstoregateway-remqjziohl`:
+If you already have gateway `petstoregateway-xxxxxxxxx`:
 
 1. Verify it's configured correctly in AWS Console
-2. Use URL: `https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp`
+2. Use URL: `https://petstoregateway-xxxxxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp`
 
 ## After Gateway Creation
 
@@ -136,8 +136,8 @@ Edit `frontend/petstore-chat-secure.html`:
 
 ```javascript
 const CONFIG = {
-    userPoolId: 'us-east-1_RNmMBC87g',
-    clientId: '435iqd7cgbn2slmgn0a36fo9lf',
+    userPoolId: 'us-east-1_xxxxxxxxx',
+    clientId: 'xxxxxxxxx',
     region: 'us-east-1',
     gatewayUrl: 'https://<YOUR-GATEWAY-ID>.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp'
 };
@@ -162,7 +162,7 @@ Or manually:
 
 ```bash
 aws amplify start-deployment \
-  --app-id d1du8jz8xbjmnh \
+  --app-id xxxxxxxxx \
   --branch-name main \
   --region us-east-1
 ```
@@ -175,7 +175,7 @@ Test the gateway with curl:
 # Get JWT token
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
-  --client-id 435iqd7cgbn2slmgn0a36fo9lf \
+  --client-id xxxxxxxxx \
   --auth-parameters USERNAME=testuser,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text \
@@ -223,7 +223,7 @@ Expected response:
 - Ensure gateway auth is configured correctly
 
 ### API Gateway Errors
-- Verify API Gateway ID: `66gd6g08ie`
+- Verify API Gateway ID: `xxxxxxxxx`
 - Check IAM role has proper permissions
 - Test API Gateway endpoints directly first
 
