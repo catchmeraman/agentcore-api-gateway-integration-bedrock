@@ -4,13 +4,13 @@
 
 ### 1. ✅ IAM Role Created
 - **Role Name**: `AgentCoreGatewayRole`
-- **Role ARN**: `arn:aws:iam::114805761158:role/AgentCoreGatewayRole`
-- **Permissions**: API Gateway invoke access for `66gd6g08ie`
+- **Role ARN**: `arn:aws:iam::11xxxxxxxx58:role/AgentCoreGatewayRole`
+- **Permissions**: API Gateway invoke access for `66gd6tyus`
 - **Status**: Active and ready
 
 ### 2. ✅ Gateway Verified
-- **Gateway ID**: `petstoregateway-remqjziohl`
-- **Gateway URL**: `https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp`
+- **Gateway ID**: `petstoregateway-re567799l`
+- **Gateway URL**: `https://petstoregateway-re6789888.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp`
 - **Status**: Active and responding
 - **Authentication**: JWT tokens working
 
@@ -30,7 +30,7 @@
 
 ### 5. ✅ Deployment Initiated
 - **Platform**: AWS Amplify
-- **App ID**: `d1du8jz8xbjmnh`
+- **App ID**: `d1du8567666`
 - **Status**: PENDING (auto-deploying from GitHub)
 - **URL**: https://petstore.cloudopsinsights.com
 
@@ -43,7 +43,7 @@ The gateway exists but needs **4 tools configured** in AWS Console.
 ### Quick Steps:
 
 1. **Open AWS Console**: https://console.aws.amazon.com/bedrock/
-2. **Navigate**: AgentCore → Gateways → `petstoregateway-remqjziohl`
+2. **Navigate**: AgentCore → Gateways → `petstoregatew67890`
 3. **Add 4 Tools**: Copy-paste from `QUICK_SETUP.md`
    - ListPets (GET /pets)
    - GetPetById (GET /pets/{id})
@@ -69,8 +69,8 @@ The gateway exists but needs **4 tools configured** in AWS Console.
                          ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │ AGENTCORE GATEWAY                                               │
-│ ✅ Gateway ID: petstoregateway-remqjziohl                       │
-│ ✅ URL: https://petstoregateway-remqjziohl...                   │
+│ ✅ Gateway ID: petstoregateway-remq                       │
+│ ✅ URL: https://petstoregateway-remq...                   │
 │ ✅ Authentication: Working (JWT validated)                      │
 │ ⚠️  Tools: Need configuration (5 min manual step)              │
 └────────────────────────┬────────────────────────────────────────┘
@@ -107,7 +107,7 @@ The gateway exists but needs **4 tools configured** in AWS Console.
 
 ### Test 1: Verify Gateway is Responding
 ```bash
-curl -s https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
+curl -s https://petstoregateway-r.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
   -H "Content-Type: application/json" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
 ```
@@ -119,13 +119,13 @@ curl -s https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.a
 ```bash
 TOKEN=$(aws cognito-idp initiate-auth \
   --auth-flow USER_PASSWORD_AUTH \
-  --client-id 435iqd7cgbn2slmgn0a36fo9lf \
-  --auth-parameters USERNAME=testuser,PASSWORD=******** \
+  --client-id 435iqd7cgbn2s \
+  --auth-parameters USERNAME=user,PASSWORD=******** \
   --query 'AuthenticationResult.AccessToken' \
   --output text \
   --region us-east-1)
 
-curl -s https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
+curl -s https://petstoregateway-xxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $TOKEN" \
   -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | jq .
@@ -186,7 +186,7 @@ Response: "Found 5 pets (🤖 AI via AgentCore Gateway → Bedrock):
 
 ### Amplify Deployment
 ```bash
-aws amplify list-jobs --app-id d1du8jz8xbjmnh --branch-name main --region us-east-1 --max-items 1
+aws amplify list-jobs --app-id d1dcccccc --branch-name main --region us-east-1 --max-items 1
 ```
 
 **Status**: PENDING → RUNNING → SUCCEED (takes ~2-3 minutes)
