@@ -44,14 +44,14 @@
 **Example:**
 ```
 # Certificate validation (add this first)
-Name:  _abc123.petstore.cloudopsinsights.com
+Name:  xxxxxxxxx.petstore.cloudopsinsights.com
 Type:  CNAME
-Value: _xyz456.acm-validations.aws.
+Value: _xxxxxxxxx.acm-validations.aws.
 
 # Domain pointing to CloudFront (add after distribution created)
 Name:  petstore
 Type:  CNAME
-Value: d123abc.cloudfront.net
+Value: xxxxxxxxx.cloudfront.net
 ```
 
 ### 3. cleanup.sh (Coming Soon)
@@ -86,7 +86,7 @@ Value: d123abc.cloudfront.net
 ### Certificate validation stuck
 **Check DNS record:**
 ```bash
-dig _abc123.petstore.cloudopsinsights.com CNAME
+dig xxxxxxxxx.petstore.cloudopsinsights.com CNAME
 ```
 
 ### CloudFront shows 403
