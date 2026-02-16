@@ -47,7 +47,7 @@
                            │
                            │ [3] Assumes IAM Role & Calls API
                            │     Role: AgentCoreGatewayRole
-                           │     User: gateway-session-c375f14c-7930-490f-bb16-b37aa0caf042
+                           │     User: gateway-session-cxxxxxxxxx1xxxxxxxxx042
                            ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                      API GATEWAY (REST)                              │
@@ -83,7 +83,7 @@
 │      "accountId": "1xxxxxxxxx",                                   │
 │      "identity": {                                                  │
 │        "caller": "xxxxxxxxx:gateway-session-...",      │
-│        "userArn": "arn:aws:sts::114805761158:assumed-role/         │
+│        "userArn": "arn:aws:sts::11xxxxxxxxx:assumed-role/         │
 │                    AgentCoreGatewayRole/gateway-session-..."        │
 │      }                                                               │
 │    },                                                                │
@@ -194,8 +194,8 @@
 
 ### [2] AgentCore Gateway Request
 ```
-POST https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp
-Authorization: Bearer eyJraWQiOiJqQ0JrZXBrdlpVU3o2...
+POST https://petstoregateway-xxxxxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp
+Authorization: Bearer eyJraWQixxxxxxxxx...
 Content-Type: application/json
 
 {
@@ -219,7 +219,7 @@ Response: HTTP 200 OK
   "httpMethod": "GET",
   "headers": {
     "Host": "xxxxxxxxx.execute-api.us-east-1.amazonaws.com",
-    "User-Agent": "Apache-HttpAsyncClient/UNAVAILABLE (Java/21.0.9)",
+    "User-Agent": "Apache-Hxxxxxxxxxlient/UNAVAILABLE (Java/21.0.9)",
     "X-Amz-Security-Token": "IQxxxxxxxxxEL3//////////wEa..."
   },
   "requestContext": {
