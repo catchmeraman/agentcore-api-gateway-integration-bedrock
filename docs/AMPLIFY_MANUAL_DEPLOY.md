@@ -154,7 +154,7 @@ Add these to your DNS provider (Route 53, GoDaddy, etc.)
 Check Cognito user exists:
 ```bash
 aws cognito-idp admin-get-user \
-  --user-pool-id us-east-1_RNmMBC87g \
+  --user-pool-id us-east-1_xxxxxxxxx\
   --username testuser \
   --region us-east-1
 ```
@@ -173,16 +173,16 @@ Wait 10 minutes, then check Amplify console for status.
 ```bash
 # Create new user
 aws cognito-idp admin-create-user \
-  --user-pool-id us-east-1_RNmMBC87g \
+  --user-pool-id us-east-1_xxxxxxxxx \
   --username newuser \
-  --temporary-password TempPass123! \
+  --temporary-password xxxxxxxxx! \
   --region us-east-1
 
 # Set permanent password
 aws cognito-idp admin-set-user-password \
-  --user-pool-id us-east-1_RNmMBC87g \
+  --user-pool-id us-east-1_xxxxxxxxx \
   --username newuser \
-  --password NewSecurePass123! \
+  --password xxxxxxxxx! \
   --permanent \
   --region us-east-1
 ```
