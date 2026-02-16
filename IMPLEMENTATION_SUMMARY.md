@@ -38,7 +38,7 @@ File: `frontend/petstore-chat-secure.html`
 ```javascript
 // Added Gateway URL to CONFIG
 const CONFIG = {
-    gatewayUrl: 'https://petstoregateway-remqjziohl.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp'
+    gatewayUrl: 'https://petstoregateway-rxxxxxxxx.gateway.bedrock-agentcore.us-east-1.amazonaws.com/mcp'
 };
 
 // Rewrote handleMessage() to use MCP protocol
@@ -177,7 +177,7 @@ File: `docs/AGENTCORE_GATEWAY_IMPLEMENTATION.md`
 
 4. **Deploy to Amplify**
    ```bash
-   aws amplify start-deployment --app-id d1du8jz8xbjmnh
+   aws amplify start-deployment --app-id dxxxxxxxxxx
    ```
 
 ### Current State:
