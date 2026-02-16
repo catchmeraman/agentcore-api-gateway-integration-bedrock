@@ -9,8 +9,8 @@ This document details the comprehensive security architecture implementing defen
 ### 1. Authentication & Authorization
 
 #### AWS Cognito User Pool
-- **User Pool ID**: `us-east-1_RNmMBC87g`
-- **Client ID**: `435iqd7cgbn2slmgn0a36fo9lf`
+- **User Pool ID**: `us-east-1_xxxxxxxx`
+- **Client ID**: `xxxxxxxx`
 - **Authentication Flow**: USER_PASSWORD_AUTH
 - **Token Type**: JWT (JSON Web Tokens)
 - **Token Expiration**: 1 hour (configurable)
@@ -86,10 +86,10 @@ Access-Control-Allow-Origin: https://petstore.cloudopsinsights.com
     "Statement": [{
       "Effect": "Allow",
       "Principal": {
-        "AWS": "arn:aws:iam::114805761158:role/AgentCoreGatewayRole"
+        "AWS": "arn:aws:iam::1xxxxxxxx:role/AgentCoreGatewayRole"
       },
       "Action": "execute-api:Invoke",
-      "Resource": "arn:aws:execute-api:us-east-1:114805761158:66gd6g08ie/*"
+      "Resource": "arn:aws:execute-api:us-east-1:1xxxxxxxx:66gd6g08ie/*"
     }]
   }
 }
@@ -116,7 +116,7 @@ Access-Control-Allow-Origin: https://petstore.cloudopsinsights.com
         "dynamodb:PutItem",
         "dynamodb:Scan"
       ],
-      "Resource": "arn:aws:dynamodb:us-east-1:114805761158:table/PetStore"
+      "Resource": "arn:aws:dynamodb:us-east-1:xxxxxxxx8:table/PetStore"
     },
     {
       "Effect": "Allow",
@@ -132,7 +132,7 @@ Access-Control-Allow-Origin: https://petstore.cloudopsinsights.com
         "logs:CreateLogStream",
         "logs:PutLogEvents"
       ],
-      "Resource": "arn:aws:logs:us-east-1:114805761158:log-group:/aws/lambda/PetStoreFunction:*"
+      "Resource": "arn:aws:logs:us-east-1:1xxxxxxxx:log-group:/aws/lambda/PetStoreFunction:*"
     }
   ]
 }
@@ -243,8 +243,8 @@ function sanitizeInput(input) {
 **Environment Variables (Lambda):**
 ```bash
 # Encrypted at rest
-COGNITO_USER_POOL_ID=us-east-1_RNmMBC87g
-COGNITO_CLIENT_ID=435iqd7cgbn2slmgn0a36fo9lf
+COGNITO_USER_POOL_ID=us-east-1_xxxxxxxx
+COGNITO_CLIENT_ID=xxxxxxxx
 DYNAMODB_TABLE=PetStore
 BEDROCK_MODEL_ID=us.amazon.nova-micro-v1:0
 ```
@@ -262,7 +262,7 @@ BEDROCK_MODEL_ID=us.amazon.nova-micro-v1:0
 {
   "timestamp": "2026-01-30T00:00:00Z",
   "requestId": "abc-123",
-  "userArn": "arn:aws:sts::114805761158:assumed-role/AgentCoreGatewayRole/...",
+  "userArn": "arn:aws:sts::1xxxxxxxx:assumed-role/AgentCoreGatewayRole/...",
   "sourceIp": "1.2.3.4",
   "method": "POST",
   "path": "/pets/query",
