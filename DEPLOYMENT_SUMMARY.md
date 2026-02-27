@@ -17,13 +17,13 @@
 
 | Component | ID/Name | Status | Purpose |
 |-----------|---------|--------|---------|
-| **AWS Amplify** | d1du8jz8xbjmnh | ✅ Active | HTTPS hosting + CI/CD |
+| **AWS Amplify** | d1du8jz8xbxxxx | ✅ Active | HTTPS hosting + CI/CD |
 | **Custom Domain** | petstore.cloudopsinsights.com | ✅ Active | Production URL |
 | **SSL Certificate** | Auto-generated | ✅ Active | Free HTTPS |
-| **API Gateway** | 66gd6g08ie | ✅ Active | REST API endpoints |
+| **API Gateway** | 66gd6xxxx | ✅ Active | REST API endpoints |
 | **Lambda Function** | PetStoreFunction | ✅ Active | Business logic + LLM |
 | **DynamoDB Table** | PetStore | ✅ Active | Pet data storage |
-| **Cognito User Pool** | us-east-1_RNmMBC87g | ✅ Active | Authentication |
+| **Cognito User Pool** | us-east-1_RNmxxxxx | ✅ Active | Authentication |
 | **Bedrock Model** | Nova Micro | ✅ Active | Natural language AI |
 
 ### Deployment Timeline
